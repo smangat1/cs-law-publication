@@ -48,7 +48,11 @@ async function renderPiece() {
 
   const eyebrow = document.createElement("p");
   eyebrow.className = "eyebrow";
-  eyebrow.textContent = piece.category;
+  const categoryLink = document.createElement("a");
+  categoryLink.href = window.HBContent.createTopicHref(piece.category);
+  categoryLink.className = "eyebrow-link";
+  categoryLink.textContent = piece.category;
+  eyebrow.appendChild(categoryLink);
 
   const title = document.createElement("h1");
   title.textContent = piece.title;
@@ -72,20 +76,33 @@ async function renderPiece() {
 
   const authorBlock = document.createElement("div");
   authorBlock.className = "article-header-meta";
-  authorBlock.innerHTML = `
-    <div>
-      <span class="meta-label">Byline</span>
-      <p>${piece.author}</p>
-    </div>
-    <div>
-      <span class="meta-label">Published</span>
-      <p>${window.HBContent.formatDate(piece.publishedAt)}</p>
-    </div>
-    <div>
-      <span class="meta-label">Section</span>
-      <p>${piece.issueId ? `Issue ${piece.issueId.replace("issue-", "").padStart(3, "0")}` : "Standalone piece"}</p>
-    </div>
-  `;
+  const byline = document.createElement("div");
+  byline.innerHTML = `<span class="meta-label">Byline</span>`;
+  const bylineLink = document.createElement("a");
+  bylineLink.href = window.HBContent.createAuthorHref(piece.author);
+  bylineLink.className = "meta-link";
+  bylineLink.textContent = piece.author;
+  byline.appendChild(bylineLink);
+
+  const published = document.createElement("div");
+  published.innerHTML = `<span class="meta-label">Published</span><p>${window.HBContent.formatDate(piece.publishedAt)}</p>`;
+
+  const section = document.createElement("div");
+  section.innerHTML = `<span class="meta-label">Section</span>`;
+  if (piece.issueId) {
+    const issue = await window.HBContent.getIssueById(piece.issueId);
+    const issueLink = document.createElement("a");
+    issueLink.href = window.HBContent.createIssueHref(issue || { id: piece.issueId });
+    issueLink.className = "meta-link";
+    issueLink.textContent = issue ? issue.label : "Issue";
+    section.appendChild(issueLink);
+  } else {
+    const standalone = document.createElement("p");
+    standalone.textContent = "Standalone piece";
+    section.appendChild(standalone);
+  }
+
+  authorBlock.append(byline, published, section);
 
   const meta = document.createElement("div");
   meta.className = "meta-row article-meta-row";

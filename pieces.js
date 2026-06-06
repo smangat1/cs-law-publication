@@ -132,6 +132,14 @@ function hbCreateIssueHref(issue) {
   return new URL(`issues/issue-001.html?id=${encodeURIComponent(issue.id)}`, HB_SITE_ROOT_URL).href;
 }
 
+function hbCreateTopicHref(topic) {
+  return new URL(`topic.html?name=${encodeURIComponent(topic)}`, HB_SITE_ROOT_URL).href;
+}
+
+function hbCreateAuthorHref(author) {
+  return new URL(`author.html?name=${encodeURIComponent(author)}`, HB_SITE_ROOT_URL).href;
+}
+
 async function hbGetMergedContent() {
   const baseContent = await hbLoadBaseContent();
   const localPieces = hbLoadStudioPieces();
@@ -207,6 +215,50 @@ async function hbGetIssuePieces(issueId, options = {}) {
   return issue.pieceIds.map((pieceId) => lookup.get(pieceId)).filter(Boolean);
 }
 
+async function hbGetTopics(options = {}) {
+  const pieces = await hbGetAllPieces(options);
+  const counts = new Map();
+
+  pieces.forEach((piece) => {
+    if (!piece.category) {
+      return;
+    }
+
+    counts.set(piece.category, (counts.get(piece.category) || 0) + 1);
+  });
+
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((left, right) => left.name.localeCompare(right.name));
+}
+
+async function hbGetAuthors(options = {}) {
+  const pieces = await hbGetAllPieces(options);
+  const counts = new Map();
+
+  pieces.forEach((piece) => {
+    if (!piece.author) {
+      return;
+    }
+
+    counts.set(piece.author, (counts.get(piece.author) || 0) + 1);
+  });
+
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((left, right) => left.name.localeCompare(right.name));
+}
+
+async function hbGetPiecesByCategory(category, options = {}) {
+  const pieces = await hbGetAllPieces(options);
+  return pieces.filter((piece) => piece.category === category);
+}
+
+async function hbGetPiecesByAuthor(author, options = {}) {
+  const pieces = await hbGetAllPieces(options);
+  return pieces.filter((piece) => piece.author === author);
+}
+
 function hbBuildPieceId(title) {
   return `custom-${hbSlugify(title || "piece")}-${Date.now()}`;
 }
@@ -274,18 +326,24 @@ async function hbExportSiteData() {
 }
 
 window.HBContent = {
+  createAuthorHref: hbCreateAuthorHref,
   buildPieceId: hbBuildPieceId,
   createHref: hbCreatePieceHref,
   createIssueHref: hbCreateIssueHref,
+  createTopicHref: hbCreateTopicHref,
   deletePiece: hbDeletePiece,
   exportSiteData: hbExportSiteData,
   formatDate: hbFormatDate,
   getAllPieces: hbGetAllPieces,
+  getAuthors: hbGetAuthors,
   getById: hbGetPieceById,
   getIssueById: hbGetIssueById,
   getIssuePieces: hbGetIssuePieces,
   getIssues: hbGetIssues,
+  getPiecesByAuthor: hbGetPiecesByAuthor,
+  getPiecesByCategory: hbGetPiecesByCategory,
   getRelatedPieces: hbGetRelatedPieces,
+  getTopics: hbGetTopics,
   loadStudioPieces: hbLoadStudioPieces,
   ready: hbLoadBaseContent,
   savePiece: hbSavePiece,

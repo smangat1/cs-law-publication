@@ -527,10 +527,126 @@ h3 {
   min-height: 0;
 }
 
+.eyebrow-link,
+.meta-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.eyebrow-link:hover,
+.eyebrow-link:focus-visible,
+.meta-link:hover,
+.meta-link:focus-visible {
+  color: var(--accent);
+}
+
+.meta-link {
+  display: inline-block;
+  color: var(--ink);
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.issue-cover-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 1.5rem;
+}
+
+.issue-cover-sheet__intro,
+.issue-cover-sheet__stats {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.issue-cover-sheet__stats {
+  align-content: start;
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 252, 0.52);
+}
+
+.issue-cover-sheet__stats p {
+  margin: 0;
+  color: var(--ink);
+}
+
+.issue-lead-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.issue-lead-card {
+  border: 1px solid var(--line);
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 252, 0.56);
+}
+
+.issue-lead-link {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.5rem;
+  text-decoration: none;
+}
+
+.issue-lead-link h3 {
+  font-size: clamp(2.3rem, 4.2vw, 3.5rem);
+}
+
+.issue-lead-link p {
+  margin: 0;
+  max-width: 46rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.issue-toc {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.issue-toc-link {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+}
+
+.issue-toc-number {
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.issue-toc-copy {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.issue-toc-copy strong {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.6rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.issue-toc-copy small {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
 @media (max-width: 900px) {
   .article-header-meta,
   .archive-controls,
   .archive-grid,
+  .issue-cover-sheet,
   .issue-grid,
   .piece-grid,
   .issue-piece-grid,
