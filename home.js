@@ -6,13 +6,6 @@ function buildFeaturedLead(piece) {
   article.href = window.HBContent.createHref(piece);
   article.setAttribute("aria-label", `Read ${piece.title}`);
 
-  const media = document.createElement("div");
-  media.className = "featured-media";
-
-  if (piece.thumbnail) {
-    media.style.backgroundImage = `url("${piece.thumbnail}")`;
-  }
-
   const body = document.createElement("div");
   body.className = "featured-body";
 
@@ -27,7 +20,17 @@ function buildFeaturedLead(piece) {
   dek.textContent = piece.dek;
 
   body.append(meta, title, dek);
-  article.append(media, body);
+
+  if (piece.thumbnail) {
+    const media = document.createElement("div");
+    media.className = "featured-media";
+    media.style.backgroundImage = `url("${piece.thumbnail}")`;
+    article.append(media, body);
+    return article;
+  }
+
+  article.classList.add("no-media");
+  article.append(body);
   return article;
 }
 

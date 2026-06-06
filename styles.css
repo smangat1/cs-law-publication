@@ -58,15 +58,18 @@ a {
 
 .dot-nav {
   position: fixed;
-  top: 4.7rem;
-  left: 1.25rem;
+  top: 6.25rem;
+  left: 1.5rem;
   z-index: 40;
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 0.6rem;
-  padding: 0.5rem 0.7rem;
+  width: max-content;
+  padding: 0.55rem 0.8rem;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(244, 240, 232, 0.66);
+  background: rgba(244, 240, 232, 0.84);
   backdrop-filter: blur(14px);
 }
 
@@ -172,14 +175,14 @@ body.scrolled .masthead {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   display: grid;
-  align-items: center;
-  padding: 2rem 0 1.2rem;
+  align-items: start;
+  padding: 0;
 }
 
 .page-inner {
-  width: min(1360px, calc(100vw - 3.5rem));
+  width: min(1480px, calc(100vw - 4rem));
   margin: 0 auto;
-  padding: 7rem 0 2.2rem;
+  padding: 8.5rem 0 3rem;
 }
 
 .page-inner-hero {
@@ -252,9 +255,9 @@ body.scrolled .masthead {
 
 .featured-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(400px, 0.9fr);
-  gap: 1.25rem;
-  margin-top: 1.45rem;
+  grid-template-columns: minmax(0, 1.25fr) minmax(460px, 0.95fr);
+  gap: 1.5rem;
+  margin-top: 1.8rem;
 }
 
 .featured-lead,
@@ -293,6 +296,12 @@ body.scrolled .masthead {
   min-height: 540px;
   padding: 1.65rem;
   border-radius: 1.75rem;
+}
+
+.featured-lead.no-media {
+  min-height: auto;
+  justify-content: end;
+  padding-top: 1.9rem;
 }
 
 .featured-media {
@@ -438,8 +447,8 @@ body.scrolled .masthead {
 
 @media (max-width: 720px) {
   .dot-nav {
-    top: 5.5rem;
-    left: 0.9rem;
+    top: 7.2rem;
+    left: 1rem;
   }
 
   .masthead {
@@ -455,7 +464,7 @@ body.scrolled .masthead {
 
   .page-inner {
     width: min(100vw - 1.2rem, 100%);
-    padding-top: 8rem;
+    padding-top: 9rem;
     padding-bottom: 1.5rem;
   }
 
