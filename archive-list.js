@@ -5,7 +5,7 @@ function buildPieceCard(piece) {
 
   const label = document.createElement("span");
   label.className = "panel-label";
-  label.textContent = piece.readTime;
+  label.textContent = `${piece.readTime} / ${window.HBContent.formatDate(piece.publishedAt)}`;
 
   const title = document.createElement("h3");
   title.textContent = piece.title;
@@ -25,15 +25,101 @@ function buildPieceCard(piece) {
   return card;
 }
 
+function normalizeText(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function sortPieces(pieces, mode) {
+  const sorted = [...pieces];
+
+  if (mode === "oldest") {
+    return sorted.sort((left, right) => String(left.publishedAt).localeCompare(String(right.publishedAt)));
+  }
+
+  if (mode === "title") {
+    return sorted.sort((left, right) => left.title.localeCompare(right.title));
+  }
+
+  return sorted.sort((left, right) => String(right.publishedAt).localeCompare(String(left.publishedAt)));
+}
+
 function renderArchiveList(containerId, type) {
   const container = document.getElementById(containerId);
+  const searchInput = document.getElementById("archive-search");
+  const categorySelect = document.getElementById("archive-category");
+  const sortSelect = document.getElementById("archive-sort");
+  const resultsCount = document.getElementById("archive-results-count");
 
   if (!container || !window.HBContent) {
     return;
   }
 
-  const pieces = window.HBContent.getAllPieces().filter((piece) => piece.type === type);
-  container.replaceChildren(...pieces.map(buildPieceCard));
+  window.HBContent.getAllPieces()
+    .then((pieces) => pieces.filter((piece) => piece.type === type && piece.status === "published"))
+    .then((pieces) => {
+      const categories = [...new Set(pieces.map((piece) => piece.category).filter(Boolean))].sort((left, right) => left.localeCompare(right));
+
+      if (categorySelect) {
+        categorySelect.replaceChildren(
+          ...[
+            (() => {
+              const option = document.createElement("option");
+              option.value = "";
+              option.textContent = "All categories";
+              return option;
+            })(),
+            ...categories.map((category) => {
+              const option = document.createElement("option");
+              option.value = category;
+              option.textContent = category;
+              return option;
+            })
+          ]
+        );
+      }
+
+      const applyFilters = () => {
+        const query = normalizeText(searchInput?.value);
+        const category = categorySelect?.value || "";
+        const sortMode = sortSelect?.value || "latest";
+
+        const filtered = sortPieces(
+          pieces.filter((piece) => {
+            const matchesCategory = !category || piece.category === category;
+            const haystack = normalizeText(`${piece.title} ${piece.dek} ${piece.category} ${piece.author}`);
+            const matchesQuery = !query || haystack.includes(query);
+            return matchesCategory && matchesQuery;
+          }),
+          sortMode
+        );
+
+        container.replaceChildren(...filtered.map(buildPieceCard));
+
+        if (resultsCount) {
+          resultsCount.textContent = `${filtered.length} ${filtered.length === 1 ? type : `${type}s`} shown`;
+        }
+
+        if (!filtered.length) {
+          const empty = document.createElement("div");
+          empty.className = "studio-empty-state archive-empty-state";
+          empty.innerHTML = `
+            <p class="eyebrow">No Matches</p>
+            <h3>No ${type}s match the current filters.</h3>
+            <p class="page-copy">Try clearing the search or broadening the category filter.</p>
+          `;
+          container.replaceChildren(empty);
+        }
+      };
+
+      [searchInput, categorySelect, sortSelect].forEach((control) => {
+        if (control) {
+          control.addEventListener("input", applyFilters);
+          control.addEventListener("change", applyFilters);
+        }
+      });
+
+      applyFilters();
+    });
 }
 
 window.HBArchive = {

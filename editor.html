@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studio | HB</title>
+  <meta name="description" content="Create and preview draft HB articles and essays with local browser-based authoring tools.">
+  <meta name="theme-color" content="#f4efe6">
+  <meta property="og:title" content="Studio | HB">
+  <meta property="og:description" content="Create and preview draft HB articles and essays with local browser-based authoring tools.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://smangat1.github.io/cs-law-publication/editor.html">
+  <meta property="og:site_name" content="HB">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://smangat1.github.io/cs-law-publication/editor.html">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="HB RSS" href="rss.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -29,15 +40,21 @@
 
     <section class="page-hero">
       <p class="eyebrow">Studio</p>
-      <h1>Add a new article or essay with a live preview and a 1200 x 630 thumbnail.</h1>
+      <h1>Manage drafts and published pieces from one structured editorial source.</h1>
       <p class="lede">
-        This editor is local to your browser and works on GitHub Pages without a backend.
-        Added pieces appear in homepage previews, archive views, and the article page.
+        Studio now works like a small local publishing desk. You can draft, publish,
+        edit, unpublish, delete, and export entries into a repo-ready JSON snapshot.
       </p>
+      <div class="studio-toolbar">
+        <button id="new-piece-button" class="studio-button studio-button-secondary" type="button">New piece</button>
+        <button id="export-content-button" class="studio-button" type="button">Export content JSON</button>
+      </div>
     </section>
 
     <section class="editor-shell">
       <form id="piece-form" class="editor-form">
+        <input id="piece-id" name="id" type="hidden">
+
         <label>
           Title
           <input id="piece-title" name="title" required>
@@ -73,6 +90,14 @@
             Publish date
             <input id="piece-published-at" name="publishedAt" type="date">
           </label>
+
+          <label>
+            Status
+            <select id="piece-status" name="status">
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </label>
         </div>
 
         <label>
@@ -97,8 +122,12 @@
           </label>
         </div>
 
+        <p id="editor-status-note" class="form-note">Creating a new local piece.</p>
         <p id="thumbnail-note" class="form-note">Recommended cover size: 1200 x 630. Other sizes will still preview, but may crop.</p>
-        <button class="studio-button" type="submit">Save piece</button>
+        <div class="studio-actions">
+          <button id="save-piece-button" class="studio-button" type="submit">Save piece</button>
+          <button id="delete-piece-button" class="studio-button studio-button-danger" type="button" hidden>Delete piece</button>
+        </div>
       </form>
 
       <div class="editor-preview">
@@ -115,8 +144,12 @@
     </section>
 
     <section class="page-section">
-      <h2>Saved custom pieces</h2>
-      <div id="saved-pieces" class="piece-grid"></div>
+      <h2>Studio pieces</h2>
+      <p class="page-copy">
+        Only published entries appear on the homepage and archive. Drafts stay local to Studio
+        until you publish them or export the content snapshot.
+      </p>
+      <div id="saved-pieces" class="studio-piece-list"></div>
     </section>
   </main>
 

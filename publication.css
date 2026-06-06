@@ -116,6 +116,19 @@ a {
   margin-top: 1.3rem;
 }
 
+.page-hero h1 {
+  max-width: 17ch;
+  margin-bottom: 1rem;
+}
+
+.page-hero .lede {
+  max-width: 54rem;
+}
+
+.page-section h2 {
+  margin-bottom: 1rem;
+}
+
 .eyebrow {
   margin: 0 0 0.8rem;
   color: var(--accent);
@@ -352,6 +365,14 @@ h3 {
   font-size: 0.85rem;
 }
 
+.studio-toolbar,
+.studio-actions,
+.studio-piece-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .studio-button {
   width: fit-content;
   padding: 0.85rem 1.1rem;
@@ -361,6 +382,16 @@ h3 {
   color: white;
   font: inherit;
   cursor: pointer;
+}
+
+.studio-button-secondary {
+  background: rgba(22, 22, 22, 0.08);
+  color: var(--ink);
+}
+
+.studio-button-danger {
+  background: rgba(125, 31, 31, 0.12);
+  color: var(--accent);
 }
 
 .preview-block {
@@ -409,11 +440,100 @@ h3 {
   min-height: 0;
 }
 
+.studio-piece-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.studio-piece-card,
+.studio-empty-state {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 1.4rem;
+  background: var(--paper);
+}
+
+.studio-piece-head {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.studio-piece-link {
+  color: var(--ink);
+  text-decoration: none;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+
+.studio-piece-link:hover,
+.studio-piece-link:focus-visible {
+  color: var(--accent);
+}
+
+.issue-piece-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.archive-controls-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.archive-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(2, minmax(180px, 0.7fr));
+  gap: 1rem;
+}
+
+.archive-control {
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+}
+
+.archive-control span {
+  color: var(--accent);
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.archive-control input,
+.archive-control select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 252, 0.8);
+  font: inherit;
+  color: var(--ink);
+}
+
+.archive-results-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.archive-empty-state {
+  min-height: 0;
+}
+
 @media (max-width: 900px) {
   .article-header-meta,
+  .archive-controls,
   .archive-grid,
   .issue-grid,
   .piece-grid,
+  .issue-piece-grid,
   .editor-shell,
   .editor-row {
     grid-template-columns: 1fr;

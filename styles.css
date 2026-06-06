@@ -245,6 +245,10 @@ body.scrolled .masthead {
   letter-spacing: -0.05em;
 }
 
+.section-header h2 {
+  margin-bottom: 1rem;
+}
+
 .section-header p,
 .about-copy p {
   margin: 0;
@@ -411,16 +415,18 @@ body.scrolled .masthead {
 }
 
 .about-copy {
+  display: grid;
+  gap: 1.35rem;
   width: min(760px, 100%);
 }
 
-.about-copy p + p {
-  margin-top: 1rem;
+.about-copy h2 {
+  margin-bottom: 0.35rem;
 }
 
 .text-link {
   display: inline-block;
-  margin-top: 1.4rem;
+  margin-top: 0.2rem;
   color: var(--accent);
   font-size: 0.95rem;
 }

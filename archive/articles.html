@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Articles | HB</title>
+  <meta name="description" content="Browse HB articles: tighter, faster interventions on governance, procedure, and technical law.">
+  <meta name="theme-color" content="#f4efe6">
+  <meta property="og:title" content="Articles | HB">
+  <meta property="og:description" content="Browse HB articles: tighter, faster interventions on governance, procedure, and technical law.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://smangat1.github.io/cs-law-publication/archive/articles.html">
+  <meta property="og:site_name" content="HB">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://smangat1.github.io/cs-law-publication/archive/articles.html">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title="HB RSS" href="../rss.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -33,6 +44,32 @@
       <p class="lede">
         Articles move quickly, argue clearly, and stay close to the pressure point.
       </p>
+    </section>
+
+    <section class="page-section archive-controls-shell">
+      <div class="archive-controls">
+        <label class="archive-control">
+          <span>Search</span>
+          <input id="archive-search" type="search" placeholder="Search titles and deks">
+        </label>
+
+        <label class="archive-control">
+          <span>Category</span>
+          <select id="archive-category">
+            <option value="">All categories</option>
+          </select>
+        </label>
+
+        <label class="archive-control">
+          <span>Sort</span>
+          <select id="archive-sort">
+            <option value="latest">Latest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title">Title A-Z</option>
+          </select>
+        </label>
+      </div>
+      <p id="archive-results-count" class="archive-results-count">Loading articles…</p>
     </section>
 
     <section id="article-grid" class="piece-grid"></section>

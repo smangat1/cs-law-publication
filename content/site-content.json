@@ -1,0 +1,246 @@
+{
+  "issues": [
+    {
+      "id": "issue-001",
+      "label": "Issue 001",
+      "title": "Signal, Procedure, and Institutional Drift",
+      "slug": "issue-001",
+      "status": "published",
+      "publishedAt": "2026-06-01",
+      "dek": "A sample issue on the records institutions keep, the opacity they defend, and the ways technical systems reorganize authority.",
+      "editorNote": "This issue gathers pieces that sit near procedure: how decisions are recorded, how systems become difficult to challenge, and how institutional legitimacy bends when technical tools start standing in for judgment.",
+      "pieceIds": [
+        "sample-model-opacity",
+        "sample-moderation-audit",
+        "sample-law-school-ai",
+        "sample-scraping-consent"
+      ]
+    }
+  ],
+  "pieces": [
+    {
+      "id": "sample-model-opacity",
+      "slug": "when-model-opacity-becomes-a-due-process-problem",
+      "title": "When Model Opacity Becomes a Due Process Problem",
+      "type": "article",
+      "status": "published",
+      "author": "HB Staff Draft",
+      "publishedAt": "2026-06-01",
+      "category": "Procedure and AI",
+      "readTime": "8 min read",
+      "dek": "A draft essay on how inscrutable automated decisions move from technical inconvenience into procedural harm.",
+      "summary": "A HB article on how automated opacity turns from technical complexity into a due process and accountability problem.",
+      "thumbnail": "",
+      "issueId": "issue-001",
+      "featured": true,
+      "relatedIds": [
+        "sample-law-school-ai",
+        "sample-scraping-consent",
+        "sample-moderation-audit"
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Institutions increasingly route consequential judgments through automated systems while preserving the rhetoric of human review. The result is a strange mismatch. The public-facing language promises discretion, but the operational reality is often one of deference to machine outputs that are difficult to interrogate and even harder to contest."
+        },
+        {
+          "type": "paragraph",
+          "text": "That mismatch matters because due process is not only about the final answer. It is also about legibility: whether a person can understand what happened, identify the relevant rule, and challenge the decision on recognizable terms. When those pathways disappear, formal review can remain on paper while meaningful review collapses in practice."
+        },
+        {
+          "type": "quote",
+          "text": "If explanation is impossible at the moment of contest, then review has already failed at the moment of decision."
+        },
+        {
+          "type": "heading",
+          "text": "Opacity is not neutral"
+        },
+        {
+          "type": "paragraph",
+          "text": "Technical teams often describe opacity as an unfortunate but unavoidable byproduct of sophisticated systems. That framing is incomplete. In governance settings, opacity redistributes power. It shifts the burden of interpretation onto the person receiving the decision while preserving interpretive authority for the institution deploying the model."
+        },
+        {
+          "type": "paragraph",
+          "text": "The deeper problem is not that every model is complicated. It is that many institutions adopt complexity without building parallel procedures for notice, explanation, and appeal. A black box can sometimes be tolerated in research. It is much harder to defend where status, opportunity, or sanction is at stake."
+        },
+        {
+          "type": "heading",
+          "text": "What procedural repair could look like"
+        },
+        {
+          "type": "paragraph",
+          "text": "A serious response would not begin and end with transparency slogans. It would require versioned decision logs, meaningful escalation pathways, and plain language explanations that are generated for the affected person rather than the procurement file. It would also require someone inside the institution to own the outcome, not merely the integration."
+        },
+        {
+          "type": "paragraph",
+          "text": "The legal system is comfortable asking whether a record exists, whether reasons can be articulated, and whether discretion has been exercised in a reviewable way. Automated systems should be expected to answer those same questions."
+        }
+      ]
+    },
+    {
+      "id": "sample-scraping-consent",
+      "slug": "scraping-consent-and-the-new-public-access-fights",
+      "title": "Scraping, Consent, and the New Public Access Fights",
+      "type": "essay",
+      "status": "published",
+      "author": "HB Notes",
+      "publishedAt": "2026-05-29",
+      "category": "Access and Extraction",
+      "readTime": "6 min read",
+      "dek": "Notes on data extraction, contractual fences, and why public online space keeps shrinking under private ordering.",
+      "summary": "A HB essay on scraping disputes, contractual fences, and the shrinking practical meaning of public online space.",
+      "thumbnail": "",
+      "issueId": "issue-001",
+      "featured": true,
+      "relatedIds": [
+        "sample-moderation-audit",
+        "sample-model-opacity",
+        "sample-law-school-ai"
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "A recurring mistake in public debate is to treat availability and permission as the same thing. Platforms exploit that confusion. They invite attention, indexing, and growth through exposure, then recast access as trespass when downstream use begins to threaten control."
+        },
+        {
+          "type": "paragraph",
+          "text": "Scraping cases sit at the center of that contradiction. They are really fights about who gets to structure knowledge once information leaves the narrow confines of a single interface. The legal vocabulary may sound technical, but the stakes are institutional: research, competition, archival memory, and the practical meaning of public-facing data."
+        },
+        {
+          "type": "quote",
+          "text": "A page can be visible to everyone and still be governed as if it belongs to a gated estate."
+        },
+        {
+          "type": "heading",
+          "text": "Contract as perimeter"
+        },
+        {
+          "type": "paragraph",
+          "text": "One reason these disputes feel unstable is that contract doctrine has become a flexible substitute for architectural limits. Instead of asking what a system technically allows, platforms increasingly ask what a user implicitly agreed to by visiting, logging in, or continuing to browse."
+        },
+        {
+          "type": "paragraph",
+          "text": "That move matters because it lets private actors redraw the edges of the public web without acknowledging the public consequences. Data that supports research and scrutiny can be made formally present but practically unavailable."
+        },
+        {
+          "type": "heading",
+          "text": "Why the framing matters"
+        },
+        {
+          "type": "paragraph",
+          "text": "If every extraction claim is reduced to theft, then the only legitimate reader is the platform itself. A more durable framework would separate harmful appropriation from socially valuable reuse and would resist collapsing access, ownership, and consent into a single platform-defined category."
+        }
+      ]
+    },
+    {
+      "id": "sample-law-school-ai",
+      "slug": "law-school-ai-policies-are-becoming-shadow-curricula",
+      "title": "Law School AI Policies Are Becoming Shadow Curricula",
+      "type": "article",
+      "status": "published",
+      "author": "HB Commentary",
+      "publishedAt": "2026-05-23",
+      "category": "Education and Practice",
+      "readTime": "7 min read",
+      "dek": "A look at how classroom restrictions and permissions shape students' practical understanding of authorship, delegation, and trust.",
+      "summary": "A HB article on how classroom AI policies quietly teach authorship, delegation, and professional responsibility.",
+      "thumbnail": "",
+      "issueId": "issue-001",
+      "featured": true,
+      "relatedIds": [
+        "sample-model-opacity",
+        "sample-moderation-audit",
+        "sample-scraping-consent"
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Every AI policy in a classroom teaches more than it says. A blanket ban implies that legitimacy depends on friction and solitude. A permissive rule with disclosure requirements suggests that judgment lies in editorial control rather than initial generation. A vague rule tells students that ambiguity is itself a feature of professional life."
+        },
+        {
+          "type": "paragraph",
+          "text": "That is why these policies matter beyond plagiarism concerns. Law schools are not just regulating a tool. They are implicitly training future lawyers how to think about delegation, verification, and responsibility in environments where machine assistance will be routine."
+        },
+        {
+          "type": "quote",
+          "text": "The policy memo becomes part of the pedagogy, whether or not the syllabus says so."
+        },
+        {
+          "type": "heading",
+          "text": "From integrity to workflow"
+        },
+        {
+          "type": "paragraph",
+          "text": "Many institutional policies still frame AI almost exclusively as an academic integrity issue. That is too narrow. In practice, the harder questions are workflow questions. When is machine drafting acceptable? What level of checking is expected? What forms of reliance undermine independent judgment?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Students need answers that map onto real professional settings. A future-facing policy would treat AI use less like a contraband problem and more like a supervised practice problem."
+        },
+        {
+          "type": "heading",
+          "text": "What students actually learn"
+        },
+        {
+          "type": "paragraph",
+          "text": "Students notice which uses are condemned, which are quietly tolerated, and which are impossible to distinguish from ordinary research support. Those norms become habits. Over time, the hidden lesson may matter more than the formal rule itself."
+        }
+      ]
+    },
+    {
+      "id": "sample-moderation-audit",
+      "slug": "content-moderation-needs-an-audit-trail-not-a-press-release",
+      "title": "Content Moderation Needs an Audit Trail, Not a Press Release",
+      "type": "essay",
+      "status": "published",
+      "author": "HB Staff Argument",
+      "publishedAt": "2026-05-17",
+      "category": "Governance Records",
+      "readTime": "7 min read",
+      "dek": "Sketching a publication-ready argument for traceable enforcement, appellate structure, and procedural memory in platform governance.",
+      "summary": "A HB essay arguing that platform legitimacy depends on durable audit trails, records, and reviewable moderation procedures.",
+      "thumbnail": "",
+      "issueId": "issue-001",
+      "featured": true,
+      "relatedIds": [
+        "sample-scraping-consent",
+        "sample-model-opacity",
+        "sample-law-school-ai"
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Moderation systems are often discussed as if they were pure scale problems. Better tooling, faster queues, sharper classifiers. Those things matter, but they do not answer the core institutional question: what counts as a decision record when enforcement is contested?"
+        },
+        {
+          "type": "paragraph",
+          "text": "In other domains, organizations that wield discretionary power are expected to preserve reasons, document escalation, and distinguish first-instance judgment from appellate review. Platform moderation frequently collapses all three."
+        },
+        {
+          "type": "quote",
+          "text": "Without a durable trail, a platform cannot tell the difference between a hard case, a repeated error, and a forgotten controversy."
+        },
+        {
+          "type": "heading",
+          "text": "Why transparency reports are not enough"
+        },
+        {
+          "type": "paragraph",
+          "text": "Transparency reports aggregate outcomes. They do not usually explain the path a single user took through the system, the policy interpretation that governed the decision, or whether a similar case was treated differently last month. They are public-relations artifacts more than procedural records."
+        },
+        {
+          "type": "paragraph",
+          "text": "An audit trail would look different. It would preserve timestamps, rule references, human overrides, and the reasons appeals succeeded or failed. It would also create a substrate for accountability that is useful internally, not just externally."
+        },
+        {
+          "type": "heading",
+          "text": "Procedural legitimacy scales better than apology"
+        },
+        {
+          "type": "paragraph",
+          "text": "Platforms often act as though legitimacy is a communications problem. But trust rarely comes from explanation after outrage. It comes from predictable process before outrage. A system that can be audited is a system that can learn."
+        }
+      ]
+    }
+  ]
+}

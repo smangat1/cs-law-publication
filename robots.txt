@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://smangat1.github.io/cs-law-publication/sitemap.xml

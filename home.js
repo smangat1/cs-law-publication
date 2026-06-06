@@ -64,23 +64,27 @@ function renderHomePieces() {
     return;
   }
 
-  const pieces = window.HBContent.getAllPieces()
-    .filter((piece) => piece.type === "article" || piece.type === "essay")
-    .slice(0, 4);
+  window.HBContent.getAllPieces()
+    .then((allPieces) => {
+      const pieces = allPieces
+        .filter((piece) => (piece.type === "article" || piece.type === "essay") && piece.status === "published")
+        .sort((left, right) => Number(right.featured) - Number(left.featured) || String(right.publishedAt).localeCompare(String(left.publishedAt)))
+        .slice(0, 4);
 
-  if (!pieces.length) {
-    return;
-  }
+      if (!pieces.length) {
+        return;
+      }
 
-  const [leadPiece, ...rest] = pieces;
-  const stack = document.createElement("div");
-  stack.className = "featured-stack";
+      const [leadPiece, ...rest] = pieces;
+      const stack = document.createElement("div");
+      stack.className = "featured-stack";
 
-  rest.forEach((piece) => {
-    stack.append(buildFeaturedItem(piece));
-  });
+      rest.forEach((piece) => {
+        stack.append(buildFeaturedItem(piece));
+      });
 
-  featuredGrid.replaceChildren(buildFeaturedLead(leadPiece), stack);
+      featuredGrid.replaceChildren(buildFeaturedLead(leadPiece), stack);
+    });
 }
 
-renderHomePieces();
+window.HBContent.ready().then(renderHomePieces);

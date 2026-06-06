@@ -1,83 +1,35 @@
-const HB_STORAGE_KEY = "hb_custom_pieces_v1";
+const HB_STUDIO_STORAGE_KEY = "hb_studio_pieces_v2";
+const HB_SITE_ROOT_URL = new URL(".", new URL(document.currentScript.src, window.location.href));
+const HB_CONTENT_SOURCE_URL = new URL("content/site-content.json", HB_SITE_ROOT_URL).href;
 
-const HB_SAMPLE_PIECES = [
-  {
-    id: "sample-model-opacity",
-    title: "When Model Opacity Becomes a Due Process Problem",
-    type: "article",
-    author: "HB Staff Draft",
-    publishedAt: "2026-06-01",
-    category: "Procedure and AI",
-    readTime: "8 min read",
-    dek: "A draft essay on how inscrutable automated decisions move from technical inconvenience into procedural harm.",
-    body: [
-      "Institutions increasingly route consequential judgments through automated systems while preserving the rhetoric of human review.",
-      "That mismatch matters because due process is not only about the final answer. It is also about legibility."
-    ],
-    thumbnail: "",
-    href: "articles/model-opacity.html",
-    issue: "Issue 001",
-    featured: true
-  },
-  {
-    id: "sample-scraping-consent",
-    title: "Scraping, Consent, and the New Public Access Fights",
-    type: "essay",
-    author: "HB Notes",
-    publishedAt: "2026-05-29",
-    category: "Access and Extraction",
-    readTime: "6 min read",
-    dek: "Notes on data extraction, contractual fences, and why public online space keeps shrinking under private ordering.",
-    body: [
-      "A recurring mistake in public debate is to treat availability and permission as the same thing.",
-      "Scraping cases sit at the center of a contradiction about who gets to structure knowledge once information leaves a single interface."
-    ],
-    thumbnail: "",
-    href: "articles/scraping-consent.html",
-    issue: "Issue 001",
-    featured: true
-  },
-  {
-    id: "sample-law-school-ai",
-    title: "Law School AI Policies Are Becoming Shadow Curricula",
-    type: "article",
-    author: "HB Commentary",
-    publishedAt: "2026-05-23",
-    category: "Education and Practice",
-    readTime: "7 min read",
-    dek: "A look at how classroom restrictions and permissions shape students' practical understanding of authorship, delegation, and trust.",
-    body: [
-      "Every AI policy in a classroom teaches more than it says.",
-      "Law schools are not just regulating a tool. They are implicitly training future lawyers how to think about delegation and responsibility."
-    ],
-    thumbnail: "",
-    href: "articles/law-school-ai.html",
-    issue: "Issue 001",
-    featured: true
-  },
-  {
-    id: "sample-moderation-audit",
-    title: "Content Moderation Needs an Audit Trail, Not a Press Release",
-    type: "essay",
-    author: "HB Staff Argument",
-    publishedAt: "2026-05-17",
-    category: "Governance Records",
-    readTime: "7 min read",
-    dek: "Sketching a publication-ready argument for traceable enforcement, appellate structure, and procedural memory in platform governance.",
-    body: [
-      "Moderation systems are often discussed as if they were pure scale problems.",
-      "Without a durable trail, a platform cannot tell the difference between a hard case, a repeated error, and a forgotten controversy."
-    ],
-    thumbnail: "",
-    href: "articles/moderation-audit-trail.html",
-    issue: "Issue 001",
-    featured: true
+let hbBaseContentPromise;
+
+function hbLoadBaseContent() {
+  if (!hbBaseContentPromise) {
+    hbBaseContentPromise = fetch(HB_CONTENT_SOURCE_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load HB content: ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((data) => ({
+        issues: Array.isArray(data.issues) ? data.issues.map(hbNormalizeIssue) : [],
+        pieces: Array.isArray(data.pieces) ? data.pieces.map(hbNormalizePiece) : []
+      }))
+      .catch(() => ({
+        issues: [],
+        pieces: []
+      }));
   }
-];
 
-function hbLoadCustomPieces() {
+  return hbBaseContentPromise;
+}
+
+function hbLoadStudioPieces() {
   try {
-    const raw = localStorage.getItem(HB_STORAGE_KEY);
+    const raw = localStorage.getItem(HB_STUDIO_STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed.map(hbNormalizePiece) : [];
   } catch (error) {
@@ -85,32 +37,61 @@ function hbLoadCustomPieces() {
   }
 }
 
-function hbSaveCustomPieces(pieces) {
-  localStorage.setItem(HB_STORAGE_KEY, JSON.stringify(pieces));
+function hbSaveStudioPieces(pieces) {
+  localStorage.setItem(HB_STUDIO_STORAGE_KEY, JSON.stringify(pieces));
 }
 
-function hbGetAllPieces() {
-  return [...hbLoadCustomPieces(), ...HB_SAMPLE_PIECES].map(hbNormalizePiece);
+function hbSlugify(value) {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
 }
 
-function hbGetPieceById(id) {
-  return hbGetAllPieces().find((piece) => piece.id === id) || null;
+function hbNormalizePiece(piece) {
+  const publishedAt = piece.publishedAt || new Date().toISOString().slice(0, 10);
+  const blocks = Array.isArray(piece.blocks) && piece.blocks.length
+    ? piece.blocks
+    : Array.isArray(piece.body)
+      ? piece.body.map((text) => ({ type: "paragraph", text }))
+      : [];
+
+  return {
+    ...piece,
+    id: piece.id || `piece-${Date.now()}`,
+    slug: piece.slug || hbSlugify(piece.title || piece.id || "piece"),
+    type: piece.type || "article",
+    status: piece.status || "draft",
+    author: piece.author || "HB Desk",
+    publishedAt,
+    category: piece.category || "Category",
+    readTime: piece.readTime || "8 min read",
+    dek: piece.dek || "",
+    summary: piece.summary || piece.dek || "",
+    issueId: piece.issueId || "",
+    featured: Boolean(piece.featured),
+    thumbnail: piece.thumbnail || "",
+    relatedIds: Array.isArray(piece.relatedIds) ? piece.relatedIds : [],
+    blocks,
+    body: blocks
+      .filter((block) => block.type === "paragraph")
+      .map((block) => block.text),
+    origin: piece.origin || "base",
+    updatedAt: piece.updatedAt || publishedAt
+  };
 }
 
-function hbCreatePieceHref(piece) {
-  return piece.href || `piece.html?id=${encodeURIComponent(piece.id)}`;
-}
-
-function hbTypeLabel(type) {
-  if (type === "essay") {
-    return "Essay";
-  }
-
-  if (type === "issue") {
-    return "Issue";
-  }
-
-  return "Article";
+function hbNormalizeIssue(issue) {
+  return {
+    ...issue,
+    id: issue.id || `issue-${Date.now()}`,
+    slug: issue.slug || hbSlugify(issue.title || issue.id || "issue"),
+    status: issue.status || "draft",
+    publishedAt: issue.publishedAt || new Date().toISOString().slice(0, 10),
+    pieceIds: Array.isArray(issue.pieceIds) ? issue.pieceIds : []
+  };
 }
 
 function hbFormatDate(value) {
@@ -131,21 +112,80 @@ function hbFormatDate(value) {
   }).format(date);
 }
 
-function hbNormalizePiece(piece) {
+function hbTypeLabel(type) {
+  if (type === "essay") {
+    return "Essay";
+  }
+
+  if (type === "issue") {
+    return "Issue";
+  }
+
+  return "Article";
+}
+
+function hbCreatePieceHref(piece) {
+  return new URL(`piece.html?id=${encodeURIComponent(piece.id)}`, HB_SITE_ROOT_URL).href;
+}
+
+function hbCreateIssueHref(issue) {
+  return new URL(`issues/issue-001.html?id=${encodeURIComponent(issue.id)}`, HB_SITE_ROOT_URL).href;
+}
+
+async function hbGetMergedContent() {
+  const baseContent = await hbLoadBaseContent();
+  const localPieces = hbLoadStudioPieces();
+  const localById = new Map(localPieces.map((piece) => [piece.id, piece]));
+  const mergedBasePieces = baseContent.pieces
+    .map((piece) => localById.get(piece.id) || piece)
+    .map(hbNormalizePiece);
+  const localOnlyPieces = localPieces
+    .filter((piece) => !baseContent.pieces.some((basePiece) => basePiece.id === piece.id))
+    .map(hbNormalizePiece);
+
   return {
-    ...piece,
-    author: piece.author || "HB Desk",
-    publishedAt: piece.publishedAt || new Date().toISOString().slice(0, 10),
-    body: Array.isArray(piece.body) ? piece.body : []
+    issues: baseContent.issues.map(hbNormalizeIssue),
+    pieces: [...localOnlyPieces, ...mergedBasePieces]
   };
 }
 
-function hbGetRelatedPieces(piece, limit = 3) {
-  return hbGetAllPieces()
+async function hbGetAllPieces(options = {}) {
+  const { includeDrafts = false } = options;
+  const content = await hbGetMergedContent();
+  return content.pieces
+    .filter((piece) => includeDrafts || piece.status === "published")
+    .sort((left, right) => String(right.publishedAt).localeCompare(String(left.publishedAt)));
+}
+
+async function hbGetPieceById(id, options = {}) {
+  const { includeDrafts = true } = options;
+  const pieces = await hbGetAllPieces({ includeDrafts });
+  return pieces.find((piece) => piece.id === id) || null;
+}
+
+async function hbGetIssueById(id) {
+  const content = await hbGetMergedContent();
+  return content.issues.find((issue) => issue.id === id) || null;
+}
+
+async function hbGetIssues(options = {}) {
+  const { includeDrafts = false } = options;
+  const content = await hbGetMergedContent();
+  return content.issues
+    .filter((issue) => includeDrafts || issue.status === "published")
+    .sort((left, right) => String(right.publishedAt).localeCompare(String(left.publishedAt)));
+}
+
+async function hbGetRelatedPieces(piece, limit = 3, options = {}) {
+  const { includeDrafts = false } = options;
+  const pieces = await hbGetAllPieces({ includeDrafts });
+  const preferred = new Set(piece.relatedIds || []);
+
+  return pieces
     .filter((candidate) => candidate.id !== piece.id)
     .sort((left, right) => {
-      const leftScore = Number(left.category === piece.category) + Number(left.type === piece.type);
-      const rightScore = Number(right.category === piece.category) + Number(right.type === piece.type);
+      const leftScore = Number(preferred.has(left.id)) * 10 + Number(left.category === piece.category) + Number(left.type === piece.type);
+      const rightScore = Number(preferred.has(right.id)) * 10 + Number(right.category === piece.category) + Number(right.type === piece.type);
 
       if (rightScore !== leftScore) {
         return rightScore - leftScore;
@@ -156,13 +196,99 @@ function hbGetRelatedPieces(piece, limit = 3) {
     .slice(0, limit);
 }
 
+async function hbGetIssuePieces(issueId, options = {}) {
+  const issue = await hbGetIssueById(issueId);
+
+  if (!issue) {
+    return [];
+  }
+
+  const lookup = new Map((await hbGetAllPieces(options)).map((piece) => [piece.id, piece]));
+  return issue.pieceIds.map((pieceId) => lookup.get(pieceId)).filter(Boolean);
+}
+
+function hbBuildPieceId(title) {
+  return `custom-${hbSlugify(title || "piece")}-${Date.now()}`;
+}
+
+function hbSavePiece(pieceInput) {
+  const normalized = hbNormalizePiece({
+    ...pieceInput,
+    origin: "local",
+    updatedAt: new Date().toISOString()
+  });
+  const pieces = hbLoadStudioPieces();
+  const index = pieces.findIndex((piece) => piece.id === normalized.id);
+
+  if (index >= 0) {
+    pieces[index] = normalized;
+  } else {
+    pieces.unshift(normalized);
+  }
+
+  hbSaveStudioPieces(pieces);
+  return normalized;
+}
+
+function hbDeletePiece(id) {
+  const pieces = hbLoadStudioPieces().filter((piece) => piece.id !== id);
+  hbSaveStudioPieces(pieces);
+}
+
+function hbSetPieceStatus(id, status) {
+  const pieces = hbLoadStudioPieces();
+  const index = pieces.findIndex((piece) => piece.id === id);
+
+  if (index < 0) {
+    return null;
+  }
+
+  pieces[index] = hbNormalizePiece({
+    ...pieces[index],
+    status,
+    updatedAt: new Date().toISOString()
+  });
+  hbSaveStudioPieces(pieces);
+  return pieces[index];
+}
+
+async function hbExportSiteData() {
+  const baseContent = await hbLoadBaseContent();
+  const localPieces = hbLoadStudioPieces().map((piece) => ({
+    ...piece,
+    blocks: piece.blocks
+  }));
+
+  const localById = new Map(localPieces.map((piece) => [piece.id, piece]));
+  const mergedBasePieces = baseContent.pieces.map((piece) => localById.get(piece.id) || piece);
+  const localOnlyPieces = localPieces.filter((piece) => !baseContent.pieces.some((basePiece) => basePiece.id === piece.id));
+
+  return JSON.stringify(
+    {
+      issues: baseContent.issues,
+      pieces: [...localOnlyPieces, ...mergedBasePieces]
+    },
+    null,
+    2
+  );
+}
+
 window.HBContent = {
+  buildPieceId: hbBuildPieceId,
   createHref: hbCreatePieceHref,
+  createIssueHref: hbCreateIssueHref,
+  deletePiece: hbDeletePiece,
+  exportSiteData: hbExportSiteData,
   formatDate: hbFormatDate,
   getAllPieces: hbGetAllPieces,
   getById: hbGetPieceById,
+  getIssueById: hbGetIssueById,
+  getIssuePieces: hbGetIssuePieces,
+  getIssues: hbGetIssues,
   getRelatedPieces: hbGetRelatedPieces,
-  loadCustomPieces: hbLoadCustomPieces,
-  saveCustomPieces: hbSaveCustomPieces,
+  loadStudioPieces: hbLoadStudioPieces,
+  ready: hbLoadBaseContent,
+  savePiece: hbSavePiece,
+  setPieceStatus: hbSetPieceStatus,
   typeLabel: hbTypeLabel
 };

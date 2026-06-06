@@ -1,7 +1,6 @@
 const pieceRoot = document.getElementById("piece-view");
 const params = new URLSearchParams(window.location.search);
 const pieceId = params.get("id");
-const piece = pieceId ? window.HBContent.getById(pieceId) : null;
 
 function renderMissing() {
   pieceRoot.innerHTML = `
@@ -13,9 +12,37 @@ function renderMissing() {
   `;
 }
 
-function renderPiece() {
-  const wrapper = document.createElement("div");
+function renderBodyBlock(block, body) {
+  if (block.type === "heading") {
+    const heading = document.createElement("h2");
+    heading.textContent = block.text;
+    body.appendChild(heading);
+    return;
+  }
 
+  if (block.type === "quote") {
+    const quote = document.createElement("div");
+    quote.className = "pull-quote";
+    quote.textContent = block.text;
+    body.appendChild(quote);
+    return;
+  }
+
+  const paragraph = document.createElement("p");
+  paragraph.className = "page-copy";
+  paragraph.textContent = block.text;
+  body.appendChild(paragraph);
+}
+
+async function renderPiece() {
+  const piece = pieceId ? await window.HBContent.getById(pieceId) : null;
+
+  if (!pieceRoot || !piece) {
+    renderMissing();
+    return;
+  }
+
+  const wrapper = document.createElement("div");
   const hero = document.createElement("section");
   hero.className = "page-hero";
 
@@ -56,7 +83,7 @@ function renderPiece() {
     </div>
     <div>
       <span class="meta-label">Section</span>
-      <p>${piece.issue || "Standalone piece"}</p>
+      <p>${piece.issueId ? `Issue ${piece.issueId.replace("issue-", "").padStart(3, "0")}` : "Standalone piece"}</p>
     </div>
   `;
 
@@ -66,19 +93,14 @@ function renderPiece() {
     <span>${window.HBContent.typeLabel(piece.type)}</span>
     <span>${piece.category}</span>
     <span>${piece.readTime}</span>
+    <span>${piece.status}</span>
   `;
 
   hero.append(eyebrow, title, dek, cover, authorBlock, meta);
 
   const body = document.createElement("section");
   body.className = "page-section";
-
-  piece.body.forEach((paragraph) => {
-    const p = document.createElement("p");
-    p.className = "page-copy";
-    p.textContent = paragraph;
-    body.appendChild(p);
-  });
+  piece.blocks.forEach((block) => renderBodyBlock(block, body));
 
   const relatedSection = document.createElement("section");
   relatedSection.className = "page-section related-reading";
@@ -93,7 +115,9 @@ function renderPiece() {
   const relatedGrid = document.createElement("div");
   relatedGrid.className = "piece-grid related-grid";
 
-  window.HBContent.getRelatedPieces(piece).forEach((relatedPiece) => {
+  const relatedPieces = await window.HBContent.getRelatedPieces(piece);
+
+  relatedPieces.forEach((relatedPiece) => {
     const card = document.createElement("a");
     card.className = "piece-card related-card";
     card.href = window.HBContent.createHref(relatedPiece);
@@ -102,19 +126,19 @@ function renderPiece() {
     label.className = "panel-label";
     label.textContent = `${window.HBContent.typeLabel(relatedPiece.type)} / ${relatedPiece.readTime}`;
 
-    const title = document.createElement("h3");
-    title.textContent = relatedPiece.title;
+    const relatedTitle = document.createElement("h3");
+    relatedTitle.textContent = relatedPiece.title;
 
-    const dek = document.createElement("p");
-    dek.textContent = relatedPiece.dek;
+    const relatedDek = document.createElement("p");
+    relatedDek.textContent = relatedPiece.dek;
 
     if (relatedPiece.thumbnail) {
       const thumb = document.createElement("div");
       thumb.className = "piece-thumb";
       thumb.style.backgroundImage = `url("${relatedPiece.thumbnail}")`;
-      card.append(label, thumb, title, dek);
+      card.append(label, thumb, relatedTitle, relatedDek);
     } else {
-      card.append(label, title, dek);
+      card.append(label, relatedTitle, relatedDek);
     }
 
     relatedGrid.appendChild(card);
@@ -126,8 +150,4 @@ function renderPiece() {
   document.title = `${piece.title} | HB`;
 }
 
-if (!pieceRoot || !piece) {
-  renderMissing();
-} else {
-  renderPiece();
-}
+window.HBContent.ready().then(renderPiece);
