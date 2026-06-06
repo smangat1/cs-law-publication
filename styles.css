@@ -150,6 +150,7 @@ body.scrolled .masthead {
   align-items: center;
   gap: 1rem;
   padding-top: 0.45rem;
+  flex-wrap: wrap;
 }
 
 .masthead-links a {
@@ -439,6 +440,10 @@ body.scrolled .masthead {
 }
 
 @media (max-width: 900px) {
+  .snap-shell {
+    scroll-snap-type: y proximity;
+  }
+
   .section-header,
   .featured-grid,
   .bucket-grid {
@@ -449,12 +454,19 @@ body.scrolled .masthead {
   .bucket-card {
     min-height: 0;
   }
+
+  .page-inner {
+    width: min(100vw - 2rem, 100%);
+    padding-top: 8.75rem;
+  }
 }
 
 @media (max-width: 720px) {
   .dot-nav {
-    top: 7.2rem;
-    left: 1rem;
+    top: auto;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .masthead {
@@ -470,16 +482,34 @@ body.scrolled .masthead {
 
   .page-inner {
     width: min(100vw - 1.2rem, 100%);
-    padding-top: 9rem;
-    padding-bottom: 1.5rem;
+    padding-top: 8.2rem;
+    padding-bottom: 1.25rem;
   }
 
   .page-inner-hero {
     padding-top: 1rem;
+    min-height: 100dvh;
   }
 
   .hero-title {
     font-size: clamp(5rem, 31vw, 8rem);
+  }
+
+  .snap-page {
+    min-height: auto;
+  }
+
+  .section-header h2,
+  .about-copy h2 {
+    font-size: clamp(2.2rem, 13vw, 3.4rem);
+  }
+
+  .featured-stack {
+    gap: 0.9rem;
+  }
+
+  .bucket-card {
+    min-height: 220px;
   }
 }
 

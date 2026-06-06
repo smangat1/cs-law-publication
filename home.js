@@ -24,7 +24,7 @@ function buildFeaturedLead(piece) {
   if (piece.thumbnail) {
     const media = document.createElement("div");
     media.className = "featured-media";
-    media.style.backgroundImage = `url("${piece.thumbnail}")`;
+    media.style.backgroundImage = `linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)), url("${piece.thumbnail}")`;
     article.append(media, body);
     return article;
   }
@@ -46,16 +46,8 @@ function buildFeaturedItem(piece) {
 
   const title = document.createElement("h3");
   title.textContent = piece.title;
-
-  if (piece.thumbnail) {
-    const thumb = document.createElement("div");
-    thumb.className = "thumbnail-pill";
-    thumb.textContent = "includes cover image";
-    article.append(meta, title, thumb);
-    return article;
-  }
-
   article.append(meta, title);
+
   return article;
 }
 
@@ -67,24 +59,30 @@ function renderHomePieces() {
   window.HBContent.getAllPieces()
     .then((allPieces) => {
       const pieces = allPieces
-        .filter((piece) => (piece.type === "article" || piece.type === "essay") && piece.status === "published")
+        .filter((piece) => piece.status === "published")
         .sort((left, right) => Number(right.featured) - Number(left.featured) || String(right.publishedAt).localeCompare(String(left.publishedAt)))
         .slice(0, 4);
 
       if (!pieces.length) {
+        featuredGrid.innerHTML = `
+          <div class="empty-state archive-empty-state">
+            <p class="eyebrow">No published pieces yet</p>
+            <h3>HB is ready for a first issue or article.</h3>
+            <p class="page-copy">Add content in the repo source to bring the front page to life.</p>
+          </div>
+        `;
         return;
       }
 
       const [leadPiece, ...rest] = pieces;
       const stack = document.createElement("div");
       stack.className = "featured-stack";
-
-      rest.forEach((piece) => {
-        stack.append(buildFeaturedItem(piece));
-      });
-
+      rest.forEach((piece) => stack.append(buildFeaturedItem(piece)));
       featuredGrid.replaceChildren(buildFeaturedLead(leadPiece), stack);
     });
 }
 
-window.HBContent.ready().then(renderHomePieces);
+window.HBContent.ready().then(() => {
+  renderHomePieces();
+  window.HBContent.trackEvent("page_view", { surface: "home" });
+});

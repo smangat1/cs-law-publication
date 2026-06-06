@@ -6,6 +6,18 @@ window.HBContent.ready().then(async () => {
   }
 
   const topics = await window.HBContent.getTopics();
+
+  if (!topics.length) {
+    topicsGrid.innerHTML = `
+      <div class="empty-state archive-empty-state">
+        <p class="eyebrow">No topics yet</p>
+        <h3>The taxonomy index is empty.</h3>
+        <p class="page-copy">Add published pieces in the repo content source to populate this shelf.</p>
+      </div>
+    `;
+    return;
+  }
+
   topicsGrid.replaceChildren(...topics.map((topic) => {
     const card = document.createElement("a");
     card.className = "piece-card";
@@ -24,4 +36,5 @@ window.HBContent.ready().then(async () => {
     card.append(label, title, dek);
     return card;
   }));
+  window.HBContent.trackEvent("page_view", { surface: "topics" });
 });

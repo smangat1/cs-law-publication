@@ -1,45 +1,23 @@
-const HB_STUDIO_STORAGE_KEY = "hb_studio_pieces_v2";
-const HB_SITE_ROOT_URL = new URL(".", new URL(document.currentScript.src, window.location.href));
-const HB_CONTENT_SOURCE_URL = new URL("content/site-content.json", HB_SITE_ROOT_URL).href;
+const HB_RUNTIME_ROOT_URL = new URL(".", new URL(document.currentScript.src, window.location.href));
+const HB_CONTENT_SOURCE_URL = new URL("content/site-content.json", HB_RUNTIME_ROOT_URL).href;
 
-let hbBaseContentPromise;
-
-function hbLoadBaseContent() {
-  if (!hbBaseContentPromise) {
-    hbBaseContentPromise = fetch(HB_CONTENT_SOURCE_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load HB content: ${response.status}`);
-        }
-
-        return response.json();
-      })
-      .then((data) => ({
-        issues: Array.isArray(data.issues) ? data.issues.map(hbNormalizeIssue) : [],
-        pieces: Array.isArray(data.pieces) ? data.pieces.map(hbNormalizePiece) : []
-      }))
-      .catch(() => ({
-        issues: [],
-        pieces: []
-      }));
+const HB_DEFAULT_SITE = {
+  title: "HB",
+  tagline: "a loosely bound tech law publication",
+  description: "HB is a loosely bound tech law publication about governance, procedure, institutional design, and the legal edges of technical systems.",
+  url: "https://smangat1.github.io/cs-law-publication/",
+  themeColor: "#f4efe6",
+  defaultOgImage: "og-default.svg",
+  analytics: {
+    endpoint: ""
   }
+};
 
-  return hbBaseContentPromise;
-}
+const HB_BLOCK_TYPES = new Set(["paragraph", "heading", "quote"]);
+const HB_ISSUE_THEME_KEYS = ["bg", "bgDeep", "paper", "ink", "muted", "line", "lineStrong", "accent", "surface"];
 
-function hbLoadStudioPieces() {
-  try {
-    const raw = localStorage.getItem(HB_STUDIO_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.map(hbNormalizePiece) : [];
-  } catch (error) {
-    return [];
-  }
-}
-
-function hbSaveStudioPieces(pieces) {
-  localStorage.setItem(HB_STUDIO_STORAGE_KEY, JSON.stringify(pieces));
-}
+let hbContentPromise;
+let hbContentCache;
 
 function hbSlugify(value) {
   return String(value || "")
@@ -48,6 +26,59 @@ function hbSlugify(value) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+}
+
+function hbAbsoluteRuntimeUrl(path = "") {
+  return new URL(path, HB_RUNTIME_ROOT_URL).href;
+}
+
+function hbAbsolutePublicUrl(path = "") {
+  const base = hbContentCache?.site?.url || HB_DEFAULT_SITE.url;
+  return new URL(path, base).href;
+}
+
+function hbResolveAssetUrl(value) {
+  if (!value) {
+    return "";
+  }
+
+  try {
+    return new URL(value).href;
+  } catch (error) {
+    return hbAbsoluteRuntimeUrl(value.replace(/^\.\//, ""));
+  }
+}
+
+function hbResolvePublicAssetUrl(value) {
+  if (!value) {
+    return "";
+  }
+
+  try {
+    return new URL(value).href;
+  } catch (error) {
+    return hbAbsolutePublicUrl(value.replace(/^\.\//, ""));
+  }
+}
+
+function hbNormalizeBlocks(blocks, body) {
+  if (Array.isArray(blocks) && blocks.length) {
+    return blocks
+      .map((block) => ({
+        type: HB_BLOCK_TYPES.has(block?.type) ? block.type : "paragraph",
+        text: String(block?.text || "").trim()
+      }))
+      .filter((block) => block.text);
+  }
+
+  if (Array.isArray(body) && body.length) {
+    return body
+      .map((text) => String(text || "").trim())
+      .filter(Boolean)
+      .map((text) => ({ type: "paragraph", text }));
+  }
+
+  return [];
 }
 
 function hbCountWords(blocks) {
@@ -69,52 +100,116 @@ function hbEstimateReadTime(blocks) {
 
   const fast = Math.max(1, Math.ceil(wordCount / 275));
   const slow = Math.max(1, Math.ceil(wordCount / 200));
-
   return fast === slow ? `${fast} min read` : `${fast}-${slow} min read`;
 }
 
 function hbNormalizePiece(piece) {
+  const blocks = hbNormalizeBlocks(piece.blocks, piece.body);
   const publishedAt = piece.publishedAt || new Date().toISOString().slice(0, 10);
-  const blocks = Array.isArray(piece.blocks) && piece.blocks.length
-    ? piece.blocks
-    : Array.isArray(piece.body)
-      ? piece.body.map((text) => ({ type: "paragraph", text }))
-      : [];
 
   return {
     ...piece,
     id: piece.id || `piece-${Date.now()}`,
     slug: piece.slug || hbSlugify(piece.title || piece.id || "piece"),
-    type: piece.type || "article",
+    type: piece.type === "essay" ? "essay" : "article",
     status: piece.status || "draft",
-    author: piece.author || "HB Desk",
+    title: String(piece.title || "Untitled piece").trim(),
+    author: String(piece.author || "HB Desk").trim(),
     publishedAt,
-    category: piece.category || "Category",
+    category: String(piece.category || "Category").trim(),
     readTime: hbEstimateReadTime(blocks),
-    dek: piece.dek || "",
-    summary: piece.summary || piece.dek || "",
+    dek: String(piece.dek || "").trim(),
+    summary: String(piece.summary || piece.dek || "").trim(),
     issueId: piece.issueId || "",
     featured: Boolean(piece.featured),
-    thumbnail: piece.thumbnail || "",
+    thumbnail: hbResolveAssetUrl(piece.thumbnail || ""),
+    thumbnailPublicUrl: hbResolvePublicAssetUrl(piece.thumbnail || ""),
+    ogImage: hbResolveAssetUrl(piece.ogImage || piece.thumbnail || ""),
+    ogImagePublicUrl: hbResolvePublicAssetUrl(piece.ogImage || piece.thumbnail || ""),
     relatedIds: Array.isArray(piece.relatedIds) ? piece.relatedIds : [],
     blocks,
-    body: blocks
-      .filter((block) => block.type === "paragraph")
-      .map((block) => block.text),
-    origin: piece.origin || "base",
-    updatedAt: piece.updatedAt || publishedAt
+    body: blocks.filter((block) => block.type === "paragraph").map((block) => block.text)
   };
 }
 
 function hbNormalizeIssue(issue) {
+  const theme = typeof issue.theme === "object" && issue.theme ? issue.theme : {};
+
   return {
     ...issue,
     id: issue.id || `issue-${Date.now()}`,
+    label: String(issue.label || "Issue").trim(),
+    title: String(issue.title || "Untitled issue").trim(),
     slug: issue.slug || hbSlugify(issue.title || issue.id || "issue"),
+    path: issue.path || `issues/${issue.slug || hbSlugify(issue.title || issue.id || "issue")}.html`,
     status: issue.status || "draft",
     publishedAt: issue.publishedAt || new Date().toISOString().slice(0, 10),
-    pieceIds: Array.isArray(issue.pieceIds) ? issue.pieceIds : []
+    dek: String(issue.dek || "").trim(),
+    editorNote: String(issue.editorNote || "").trim(),
+    coverImage: hbResolveAssetUrl(issue.coverImage || ""),
+    coverImagePublicUrl: hbResolvePublicAssetUrl(issue.coverImage || ""),
+    ogImage: hbResolveAssetUrl(issue.ogImage || issue.coverImage || ""),
+    ogImagePublicUrl: hbResolvePublicAssetUrl(issue.ogImage || issue.coverImage || ""),
+    layout: issue.layout || "default",
+    pieceIds: Array.isArray(issue.pieceIds) ? issue.pieceIds : [],
+    theme: {
+      slug: theme.slug || hbSlugify(issue.title || issue.id || "issue"),
+      bg: theme.bg || "",
+      bgDeep: theme.bgDeep || "",
+      paper: theme.paper || "",
+      ink: theme.ink || "",
+      muted: theme.muted || "",
+      line: theme.line || "",
+      lineStrong: theme.lineStrong || "",
+      accent: theme.accent || "",
+      surface: theme.surface || ""
+    }
   };
+}
+
+function hbNormalizeSite(site) {
+  return {
+    ...HB_DEFAULT_SITE,
+    ...(site || {}),
+    defaultOgImage: hbResolvePublicAssetUrl(site?.defaultOgImage || HB_DEFAULT_SITE.defaultOgImage),
+    analytics: {
+      ...HB_DEFAULT_SITE.analytics,
+      ...(site?.analytics || {})
+    }
+  };
+}
+
+async function hbLoadContent() {
+  if (!hbContentPromise) {
+    hbContentPromise = fetch(HB_CONTENT_SOURCE_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to load HB content: ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        const content = {
+          site: hbNormalizeSite(data.site),
+          issues: Array.isArray(data.issues) ? data.issues.map(hbNormalizeIssue) : [],
+          pieces: Array.isArray(data.pieces) ? data.pieces.map(hbNormalizePiece) : []
+        };
+        hbContentCache = content;
+        return content;
+      })
+      .catch(() => {
+        const fallback = {
+          site: hbNormalizeSite(),
+          issues: [],
+          pieces: []
+        };
+        hbContentCache = fallback;
+        return fallback;
+      });
+  }
+
+  return hbContentPromise;
 }
 
 function hbFormatDate(value) {
@@ -123,7 +218,6 @@ function hbFormatDate(value) {
   }
 
   const date = new Date(`${value}T12:00:00`);
-
   if (Number.isNaN(date.getTime())) {
     return value;
   }
@@ -148,68 +242,77 @@ function hbTypeLabel(type) {
 }
 
 function hbCreatePieceHref(piece) {
-  return new URL(`piece.html?id=${encodeURIComponent(piece.id)}`, HB_SITE_ROOT_URL).href;
+  return hbAbsoluteRuntimeUrl(`piece.html?id=${encodeURIComponent(piece.id)}`);
+}
+
+function hbCreatePiecePublicUrl(piece) {
+  return hbAbsolutePublicUrl(`piece.html?id=${encodeURIComponent(piece.id)}`);
 }
 
 function hbCreateIssueHref(issue) {
-  return new URL(`issues/issue-001.html?id=${encodeURIComponent(issue.id)}`, HB_SITE_ROOT_URL).href;
+  const path = issue?.path || `issues/${issue?.slug || "issue"}.html`;
+  return hbAbsoluteRuntimeUrl(path);
+}
+
+function hbCreateIssuePublicUrl(issue) {
+  const path = issue?.path || `issues/${issue?.slug || "issue"}.html`;
+  return hbAbsolutePublicUrl(path);
 }
 
 function hbCreateTopicHref(topic) {
-  return new URL(`topic.html?name=${encodeURIComponent(topic)}`, HB_SITE_ROOT_URL).href;
+  return hbAbsoluteRuntimeUrl(`topic.html?name=${encodeURIComponent(topic)}`);
+}
+
+function hbCreateTopicPublicUrl(topic) {
+  return hbAbsolutePublicUrl(`topic.html?name=${encodeURIComponent(topic)}`);
 }
 
 function hbCreateAuthorHref(author) {
-  return new URL(`author.html?name=${encodeURIComponent(author)}`, HB_SITE_ROOT_URL).href;
+  return hbAbsoluteRuntimeUrl(`author.html?name=${encodeURIComponent(author)}`);
 }
 
-async function hbGetMergedContent() {
-  const baseContent = await hbLoadBaseContent();
-  const localPieces = hbLoadStudioPieces();
-  const localById = new Map(localPieces.map((piece) => [piece.id, piece]));
-  const mergedBasePieces = baseContent.pieces
-    .map((piece) => localById.get(piece.id) || piece)
-    .map(hbNormalizePiece);
-  const localOnlyPieces = localPieces
-    .filter((piece) => !baseContent.pieces.some((basePiece) => basePiece.id === piece.id))
-    .map(hbNormalizePiece);
-
-  return {
-    issues: baseContent.issues.map(hbNormalizeIssue),
-    pieces: [...localOnlyPieces, ...mergedBasePieces]
-  };
+function hbCreateAuthorPublicUrl(author) {
+  return hbAbsolutePublicUrl(`author.html?name=${encodeURIComponent(author)}`);
 }
 
 async function hbGetAllPieces(options = {}) {
   const { includeDrafts = false } = options;
-  const content = await hbGetMergedContent();
+  const content = await hbLoadContent();
   return content.pieces
     .filter((piece) => includeDrafts || piece.status === "published")
     .sort((left, right) => String(right.publishedAt).localeCompare(String(left.publishedAt)));
 }
 
 async function hbGetPieceById(id, options = {}) {
-  const { includeDrafts = true } = options;
-  const pieces = await hbGetAllPieces({ includeDrafts });
+  const pieces = await hbGetAllPieces(options);
   return pieces.find((piece) => piece.id === id) || null;
-}
-
-async function hbGetIssueById(id) {
-  const content = await hbGetMergedContent();
-  return content.issues.find((issue) => issue.id === id) || null;
 }
 
 async function hbGetIssues(options = {}) {
   const { includeDrafts = false } = options;
-  const content = await hbGetMergedContent();
+  const content = await hbLoadContent();
   return content.issues
     .filter((issue) => includeDrafts || issue.status === "published")
     .sort((left, right) => String(right.publishedAt).localeCompare(String(left.publishedAt)));
 }
 
+async function hbGetIssueById(id) {
+  const issues = await hbGetIssues({ includeDrafts: true });
+  return issues.find((issue) => issue.id === id) || null;
+}
+
+async function hbGetIssuePieces(issueId, options = {}) {
+  const issue = await hbGetIssueById(issueId);
+  if (!issue) {
+    return [];
+  }
+
+  const lookup = new Map((await hbGetAllPieces(options)).map((piece) => [piece.id, piece]));
+  return issue.pieceIds.map((pieceId) => lookup.get(pieceId)).filter(Boolean);
+}
+
 async function hbGetRelatedPieces(piece, limit = 3, options = {}) {
-  const { includeDrafts = false } = options;
-  const pieces = await hbGetAllPieces({ includeDrafts });
+  const pieces = await hbGetAllPieces(options);
   const preferred = new Set(piece.relatedIds || []);
 
   return pieces
@@ -227,27 +330,14 @@ async function hbGetRelatedPieces(piece, limit = 3, options = {}) {
     .slice(0, limit);
 }
 
-async function hbGetIssuePieces(issueId, options = {}) {
-  const issue = await hbGetIssueById(issueId);
-
-  if (!issue) {
-    return [];
-  }
-
-  const lookup = new Map((await hbGetAllPieces(options)).map((piece) => [piece.id, piece]));
-  return issue.pieceIds.map((pieceId) => lookup.get(pieceId)).filter(Boolean);
-}
-
 async function hbGetTopics(options = {}) {
   const pieces = await hbGetAllPieces(options);
   const counts = new Map();
 
   pieces.forEach((piece) => {
-    if (!piece.category) {
-      return;
+    if (piece.category) {
+      counts.set(piece.category, (counts.get(piece.category) || 0) + 1);
     }
-
-    counts.set(piece.category, (counts.get(piece.category) || 0) + 1);
   });
 
   return [...counts.entries()]
@@ -260,11 +350,9 @@ async function hbGetAuthors(options = {}) {
   const counts = new Map();
 
   pieces.forEach((piece) => {
-    if (!piece.author) {
-      return;
+    if (piece.author) {
+      counts.set(piece.author, (counts.get(piece.author) || 0) + 1);
     }
-
-    counts.set(piece.author, (counts.get(piece.author) || 0) + 1);
   });
 
   return [...counts.entries()]
@@ -273,90 +361,148 @@ async function hbGetAuthors(options = {}) {
 }
 
 async function hbGetPiecesByCategory(category, options = {}) {
-  const pieces = await hbGetAllPieces(options);
-  return pieces.filter((piece) => piece.category === category);
+  return (await hbGetAllPieces(options)).filter((piece) => piece.category === category);
 }
 
 async function hbGetPiecesByAuthor(author, options = {}) {
-  const pieces = await hbGetAllPieces(options);
-  return pieces.filter((piece) => piece.author === author);
+  return (await hbGetAllPieces(options)).filter((piece) => piece.author === author);
 }
 
-function hbBuildPieceId(title) {
-  return `custom-${hbSlugify(title || "piece")}-${Date.now()}`;
-}
+function hbUpsertMetaTag(selector, attributes) {
+  let node = document.head.querySelector(selector);
 
-function hbSavePiece(pieceInput) {
-  const normalized = hbNormalizePiece({
-    ...pieceInput,
-    origin: "local",
-    updatedAt: new Date().toISOString()
-  });
-  const pieces = hbLoadStudioPieces();
-  const index = pieces.findIndex((piece) => piece.id === normalized.id);
-
-  if (index >= 0) {
-    pieces[index] = normalized;
-  } else {
-    pieces.unshift(normalized);
+  if (!node) {
+    node = document.createElement("meta");
+    document.head.appendChild(node);
   }
 
-  hbSaveStudioPieces(pieces);
-  return normalized;
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value) {
+      node.setAttribute(key, value);
+    }
+  });
 }
 
-function hbDeletePiece(id) {
-  const pieces = hbLoadStudioPieces().filter((piece) => piece.id !== id);
-  hbSaveStudioPieces(pieces);
-}
+function hbUpsertLink(selector, attributes) {
+  let node = document.head.querySelector(selector);
 
-function hbSetPieceStatus(id, status) {
-  const pieces = hbLoadStudioPieces();
-  const index = pieces.findIndex((piece) => piece.id === id);
-
-  if (index < 0) {
-    return null;
+  if (!node) {
+    node = document.createElement("link");
+    document.head.appendChild(node);
   }
 
-  pieces[index] = hbNormalizePiece({
-    ...pieces[index],
-    status,
-    updatedAt: new Date().toISOString()
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value) {
+      node.setAttribute(key, value);
+    }
   });
-  hbSaveStudioPieces(pieces);
-  return pieces[index];
 }
 
-async function hbExportSiteData() {
-  const baseContent = await hbLoadBaseContent();
-  const localPieces = hbLoadStudioPieces().map((piece) => ({
-    ...piece,
-    blocks: piece.blocks
-  }));
+function hbSetDocumentMeta(options = {}) {
+  const {
+    title,
+    description,
+    type = "website",
+    url,
+    image,
+    themeColor
+  } = options;
 
-  const localById = new Map(localPieces.map((piece) => [piece.id, piece]));
-  const mergedBasePieces = baseContent.pieces.map((piece) => localById.get(piece.id) || piece);
-  const localOnlyPieces = localPieces.filter((piece) => !baseContent.pieces.some((basePiece) => basePiece.id === piece.id));
+  const site = hbContentCache?.site || HB_DEFAULT_SITE;
+  const fullTitle = title ? `${title} | ${site.title}` : `${site.title} | ${site.tagline}`;
+  const finalDescription = description || site.description;
+  const finalUrl = url || hbAbsolutePublicUrl(window.location.pathname.replace(/^\//, "") + window.location.search);
+  const finalImage = image || site.defaultOgImage || "";
 
-  return JSON.stringify(
-    {
-      issues: baseContent.issues,
-      pieces: [...localOnlyPieces, ...mergedBasePieces]
-    },
-    null,
-    2
-  );
+  document.title = fullTitle;
+
+  if (finalDescription) {
+    hbUpsertMetaTag('meta[name="description"]', { name: "description", content: finalDescription });
+    hbUpsertMetaTag('meta[property="og:description"]', { property: "og:description", content: finalDescription });
+    hbUpsertMetaTag('meta[name="twitter:description"]', { name: "twitter:description", content: finalDescription });
+  }
+
+  hbUpsertMetaTag('meta[property="og:title"]', { property: "og:title", content: fullTitle });
+  hbUpsertMetaTag('meta[name="twitter:title"]', { name: "twitter:title", content: fullTitle });
+  hbUpsertMetaTag('meta[property="og:type"]', { property: "og:type", content: type });
+  hbUpsertMetaTag('meta[property="og:url"]', { property: "og:url", content: finalUrl });
+  hbUpsertMetaTag('meta[property="og:site_name"]', { property: "og:site_name", content: site.title });
+  hbUpsertMetaTag('meta[name="twitter:card"]', { name: "twitter:card", content: finalImage ? "summary_large_image" : "summary" });
+  hbUpsertLink('link[rel="canonical"]', { rel: "canonical", href: finalUrl });
+
+  if (finalImage) {
+    hbUpsertMetaTag('meta[property="og:image"]', { property: "og:image", content: finalImage });
+    hbUpsertMetaTag('meta[name="twitter:image"]', { name: "twitter:image", content: finalImage });
+  }
+
+  const nextThemeColor = themeColor || site.themeColor;
+  if (nextThemeColor) {
+    hbUpsertMetaTag('meta[name="theme-color"]', { name: "theme-color", content: nextThemeColor });
+  }
+}
+
+function hbClearIssueTheme() {
+  document.body.classList.remove("issue-theme-active");
+  document.body.removeAttribute("data-issue-theme");
+  HB_ISSUE_THEME_KEYS.forEach((key) => {
+    document.body.style.removeProperty(`--issue-${key}`);
+  });
+}
+
+function hbApplyIssueTheme(issue) {
+  hbClearIssueTheme();
+
+  if (!issue?.theme) {
+    return;
+  }
+
+  document.body.classList.add("issue-theme-active");
+  document.body.dataset.issueTheme = issue.theme.slug || issue.slug || issue.id;
+
+  HB_ISSUE_THEME_KEYS.forEach((key) => {
+    if (issue.theme[key]) {
+      document.body.style.setProperty(`--issue-${key}`, issue.theme[key]);
+    }
+  });
+}
+
+function hbTrackEvent(name, detail = {}) {
+  const endpoint = hbContentCache?.site?.analytics?.endpoint || "";
+  const payload = {
+    name,
+    detail,
+    path: window.location.pathname + window.location.search,
+    timestamp: new Date().toISOString()
+  };
+
+  if (endpoint) {
+    const body = JSON.stringify(payload);
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(endpoint, body);
+      return;
+    }
+
+    fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+      keepalive: true
+    }).catch(() => {});
+  }
 }
 
 window.HBContent = {
+  applyIssueTheme: hbApplyIssueTheme,
+  clearIssueTheme: hbClearIssueTheme,
   createAuthorHref: hbCreateAuthorHref,
-  buildPieceId: hbBuildPieceId,
+  createAuthorPublicUrl: hbCreateAuthorPublicUrl,
   createHref: hbCreatePieceHref,
   createIssueHref: hbCreateIssueHref,
+  createIssuePublicUrl: hbCreateIssuePublicUrl,
+  createPublicHref: hbCreatePiecePublicUrl,
   createTopicHref: hbCreateTopicHref,
-  deletePiece: hbDeletePiece,
+  createTopicPublicUrl: hbCreateTopicPublicUrl,
   estimateReadTime: hbEstimateReadTime,
-  exportSiteData: hbExportSiteData,
   formatDate: hbFormatDate,
   getAllPieces: hbGetAllPieces,
   getAuthors: hbGetAuthors,
@@ -367,10 +513,12 @@ window.HBContent = {
   getPiecesByAuthor: hbGetPiecesByAuthor,
   getPiecesByCategory: hbGetPiecesByCategory,
   getRelatedPieces: hbGetRelatedPieces,
+  getSite: () => hbContentCache?.site || HB_DEFAULT_SITE,
   getTopics: hbGetTopics,
-  loadStudioPieces: hbLoadStudioPieces,
-  ready: hbLoadBaseContent,
-  savePiece: hbSavePiece,
-  setPieceStatus: hbSetPieceStatus,
+  ready: hbLoadContent,
+  resolveAssetUrl: hbResolveAssetUrl,
+  resolvePublicAssetUrl: hbResolvePublicAssetUrl,
+  setMeta: hbSetDocumentMeta,
+  trackEvent: hbTrackEvent,
   typeLabel: hbTypeLabel
 };

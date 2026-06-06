@@ -16,7 +16,7 @@ function buildPieceCard(piece) {
   if (piece.thumbnail) {
     const thumb = document.createElement("div");
     thumb.className = "piece-thumb";
-    thumb.style.backgroundImage = `url("${piece.thumbnail}")`;
+    thumb.style.backgroundImage = `linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)), url("${piece.thumbnail}")`;
     card.append(label, thumb, title, dek);
     return card;
   }
@@ -57,6 +57,20 @@ function renderArchiveList(containerId, type) {
   window.HBContent.getAllPieces()
     .then((pieces) => pieces.filter((piece) => piece.type === type && piece.status === "published"))
     .then((pieces) => {
+      if (!pieces.length) {
+        if (resultsCount) {
+          resultsCount.textContent = `0 ${type}s shown`;
+        }
+        container.innerHTML = `
+          <div class="empty-state archive-empty-state">
+            <p class="eyebrow">No ${type}s yet</p>
+            <h3>This shelf is currently empty.</h3>
+            <p class="page-copy">Add published ${type}s in the repo content source to populate this archive.</p>
+          </div>
+        `;
+        return;
+      }
+
       const categories = [...new Set(pieces.map((piece) => piece.category).filter(Boolean))].sort((left, right) => left.localeCompare(right));
 
       if (categorySelect) {
@@ -93,22 +107,22 @@ function renderArchiveList(containerId, type) {
           sortMode
         );
 
-        container.replaceChildren(...filtered.map(buildPieceCard));
-
         if (resultsCount) {
           resultsCount.textContent = `${filtered.length} ${filtered.length === 1 ? type : `${type}s`} shown`;
         }
 
         if (!filtered.length) {
-          const empty = document.createElement("div");
-          empty.className = "studio-empty-state archive-empty-state";
-          empty.innerHTML = `
-            <p class="eyebrow">No Matches</p>
-            <h3>No ${type}s match the current filters.</h3>
-            <p class="page-copy">Try clearing the search or broadening the category filter.</p>
+          container.innerHTML = `
+            <div class="empty-state archive-empty-state">
+              <p class="eyebrow">No matches</p>
+              <h3>No ${type}s match the current filters.</h3>
+              <p class="page-copy">Try clearing the search or broadening the category filter.</p>
+            </div>
           `;
-          container.replaceChildren(empty);
+          return;
         }
+
+        container.replaceChildren(...filtered.map(buildPieceCard));
       };
 
       [searchInput, categorySelect, sortSelect].forEach((control) => {
@@ -119,6 +133,7 @@ function renderArchiveList(containerId, type) {
       });
 
       applyFilters();
+      window.HBContent.trackEvent("archive_view", { type });
     });
 }
 

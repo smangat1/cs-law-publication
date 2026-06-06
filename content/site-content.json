@@ -1,14 +1,41 @@
 {
+  "site": {
+    "title": "HB",
+    "tagline": "a loosely bound tech law publication",
+    "description": "HB is a loosely bound tech law publication about governance, procedure, institutional design, and the legal edges of technical systems.",
+    "url": "https://smangat1.github.io/cs-law-publication/",
+    "themeColor": "#f4efe6",
+    "defaultOgImage": "og-default.svg",
+    "analytics": {
+      "endpoint": ""
+    }
+  },
   "issues": [
     {
       "id": "issue-001",
       "label": "Issue 001",
       "title": "Signal, Procedure, and Institutional Drift",
       "slug": "issue-001",
+      "path": "issues/issue-001.html",
       "status": "published",
       "publishedAt": "2026-06-01",
       "dek": "A sample issue on the records institutions keep, the opacity they defend, and the ways technical systems reorganize authority.",
       "editorNote": "This issue gathers pieces that sit near procedure: how decisions are recorded, how systems become difficult to challenge, and how institutional legitimacy bends when technical tools start standing in for judgment.",
+      "coverImage": "issues/issue-001-cover.svg",
+      "ogImage": "issues/issue-001-og.svg",
+      "layout": "atlas",
+      "theme": {
+        "slug": "signal-drift",
+        "bg": "#151924",
+        "bgDeep": "#0a0d14",
+        "paper": "rgba(19, 24, 36, 0.9)",
+        "ink": "#f1e7d7",
+        "muted": "rgba(241, 231, 215, 0.72)",
+        "line": "rgba(241, 231, 215, 0.16)",
+        "lineStrong": "rgba(241, 231, 215, 0.3)",
+        "accent": "#ef8f68",
+        "surface": "rgba(7, 10, 17, 0.6)"
+      },
       "pieceIds": [
         "sample-model-opacity",
         "sample-moderation-audit",

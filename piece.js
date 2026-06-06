@@ -1,15 +1,29 @@
 const pieceRoot = document.getElementById("piece-view");
-const params = new URLSearchParams(window.location.search);
-const pieceId = params.get("id");
+const pieceParams = new URLSearchParams(window.location.search);
+const pieceId = pieceParams.get("id");
 
-function renderMissing() {
+function renderMissingPiece(message = "This piece could not be found.") {
+  if (!pieceRoot) {
+    return;
+  }
+
   pieceRoot.innerHTML = `
     <section class="page-hero">
       <p class="eyebrow">Missing Piece</p>
-      <h1>This piece could not be found.</h1>
-      <p class="lede">Return to the archive or create a new one in Studio.</p>
+      <h1>${message}</h1>
+      <p class="lede">Return to the archive to keep reading across articles, essays, and issues.</p>
+      <div class="link-list">
+        <a href="archive.html">Browse the archive</a>
+        <a href="about.html">Read the editorial note</a>
+      </div>
     </section>
   `;
+
+  window.HBContent.setMeta({
+    title: "Missing piece",
+    description: "The requested HB piece could not be found.",
+    url: window.HBContent.getSite().url + "piece.html" + window.location.search
+  });
 }
 
 function renderBodyBlock(block, body) {
@@ -34,15 +48,51 @@ function renderBodyBlock(block, body) {
   body.appendChild(paragraph);
 }
 
-async function renderPiece() {
-  const piece = pieceId ? await window.HBContent.getById(pieceId) : null;
+function buildRelatedCard(relatedPiece) {
+  const card = document.createElement("a");
+  card.className = "piece-card related-card";
+  card.href = window.HBContent.createHref(relatedPiece);
 
-  if (!pieceRoot || !piece) {
-    renderMissing();
+  const label = document.createElement("span");
+  label.className = "panel-label";
+  label.textContent = `${window.HBContent.typeLabel(relatedPiece.type)} / ${relatedPiece.readTime}`;
+
+  const title = document.createElement("h3");
+  title.textContent = relatedPiece.title;
+
+  const relatedDek = document.createElement("p");
+  relatedDek.textContent = relatedPiece.dek;
+
+  if (relatedPiece.thumbnail) {
+    const thumb = document.createElement("div");
+    thumb.className = "piece-thumb";
+    thumb.style.backgroundImage = `linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)), url("${relatedPiece.thumbnail}")`;
+    card.append(label, thumb, title, relatedDek);
+    return card;
+  }
+
+  card.append(label, title, relatedDek);
+  return card;
+}
+
+async function renderPiece() {
+  if (!pieceRoot || !pieceId) {
+    renderMissingPiece("No piece was specified.");
+    return;
+  }
+
+  const piece = await window.HBContent.getById(pieceId);
+
+  if (!piece) {
+    renderMissingPiece();
     return;
   }
 
   const wrapper = document.createElement("div");
+  let issue = null;
+  if (piece.issueId) {
+    issue = await window.HBContent.getIssueById(piece.issueId);
+  }
   const hero = document.createElement("section");
   hero.className = "page-hero";
 
@@ -59,13 +109,13 @@ async function renderPiece() {
 
   const dek = document.createElement("p");
   dek.className = "lede";
-  dek.textContent = piece.dek;
+  dek.textContent = piece.dek || piece.summary || "This HB piece does not yet have a publication deck.";
 
   const cover = document.createElement("div");
   cover.className = piece.thumbnail ? "piece-thumb piece-thumb-large" : "piece-cover";
 
   if (piece.thumbnail) {
-    cover.style.backgroundImage = `url("${piece.thumbnail}")`;
+    cover.style.backgroundImage = `linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)), url("${piece.thumbnail}")`;
   } else {
     cover.innerHTML = `
       <span class="piece-cover-kicker">${window.HBContent.typeLabel(piece.type)}</span>
@@ -76,6 +126,7 @@ async function renderPiece() {
 
   const authorBlock = document.createElement("div");
   authorBlock.className = "article-header-meta";
+
   const byline = document.createElement("div");
   byline.innerHTML = `<span class="meta-label">Byline</span>`;
   const bylineLink = document.createElement("a");
@@ -90,12 +141,13 @@ async function renderPiece() {
   const section = document.createElement("div");
   section.innerHTML = `<span class="meta-label">Section</span>`;
   if (piece.issueId) {
-    const issue = await window.HBContent.getIssueById(piece.issueId);
-    const issueLink = document.createElement("a");
-    issueLink.href = window.HBContent.createIssueHref(issue || { id: piece.issueId });
-    issueLink.className = "meta-link";
-    issueLink.textContent = issue ? issue.label : "Issue";
-    section.appendChild(issueLink);
+    if (issue) {
+      const issueLink = document.createElement("a");
+      issueLink.href = window.HBContent.createIssueHref(issue);
+      issueLink.className = "meta-link";
+      issueLink.textContent = issue.label;
+      section.appendChild(issueLink);
+    }
   } else {
     const standalone = document.createElement("p");
     standalone.textContent = "Standalone piece";
@@ -110,61 +162,53 @@ async function renderPiece() {
     <span>${window.HBContent.typeLabel(piece.type)}</span>
     <span>${piece.category}</span>
     <span>${piece.readTime}</span>
-    <span>${piece.status}</span>
   `;
 
   hero.append(eyebrow, title, dek, cover, authorBlock, meta);
 
   const body = document.createElement("section");
   body.className = "page-section";
-  piece.blocks.forEach((block) => renderBodyBlock(block, body));
 
-  const relatedSection = document.createElement("section");
-  relatedSection.className = "page-section related-reading";
+  if (piece.blocks.length) {
+    piece.blocks.forEach((block) => renderBodyBlock(block, body));
+  } else {
+    body.innerHTML = `
+      <p class="page-copy">This piece is missing a readable body. Check the repo content source before publishing this route.</p>
+    `;
+  }
 
-  const relatedEyebrow = document.createElement("p");
-  relatedEyebrow.className = "eyebrow";
-  relatedEyebrow.textContent = "Related Reading";
-
-  const relatedTitle = document.createElement("h2");
-  relatedTitle.textContent = "Keep reading inside the same desk.";
-
-  const relatedGrid = document.createElement("div");
-  relatedGrid.className = "piece-grid related-grid";
+  wrapper.append(hero, body);
 
   const relatedPieces = await window.HBContent.getRelatedPieces(piece);
+  if (relatedPieces.length) {
+    const relatedSection = document.createElement("section");
+    relatedSection.className = "page-section related-reading";
 
-  relatedPieces.forEach((relatedPiece) => {
-    const card = document.createElement("a");
-    card.className = "piece-card related-card";
-    card.href = window.HBContent.createHref(relatedPiece);
+    const relatedEyebrow = document.createElement("p");
+    relatedEyebrow.className = "eyebrow";
+    relatedEyebrow.textContent = "Related Reading";
 
-    const label = document.createElement("span");
-    label.className = "panel-label";
-    label.textContent = `${window.HBContent.typeLabel(relatedPiece.type)} / ${relatedPiece.readTime}`;
+    const relatedTitle = document.createElement("h2");
+    relatedTitle.textContent = "Keep reading inside the same desk.";
 
-    const relatedTitle = document.createElement("h3");
-    relatedTitle.textContent = relatedPiece.title;
+    const relatedGrid = document.createElement("div");
+    relatedGrid.className = "piece-grid related-grid";
+    relatedGrid.replaceChildren(...relatedPieces.map(buildRelatedCard));
 
-    const relatedDek = document.createElement("p");
-    relatedDek.textContent = relatedPiece.dek;
+    relatedSection.append(relatedEyebrow, relatedTitle, relatedGrid);
+    wrapper.append(relatedSection);
+  }
 
-    if (relatedPiece.thumbnail) {
-      const thumb = document.createElement("div");
-      thumb.className = "piece-thumb";
-      thumb.style.backgroundImage = `url("${relatedPiece.thumbnail}")`;
-      card.append(label, thumb, relatedTitle, relatedDek);
-    } else {
-      card.append(label, relatedTitle, relatedDek);
-    }
-
-    relatedGrid.appendChild(card);
-  });
-
-  relatedSection.append(relatedEyebrow, relatedTitle, relatedGrid);
-  wrapper.append(hero, body, relatedSection);
   pieceRoot.replaceChildren(wrapper);
-  document.title = `${piece.title} | HB`;
+
+  window.HBContent.setMeta({
+    title: piece.title,
+    description: piece.summary || piece.dek,
+    type: "article",
+    url: window.HBContent.createPublicHref(piece),
+    image: piece.ogImagePublicUrl || piece.thumbnailPublicUrl || issue?.ogImagePublicUrl
+  });
+  window.HBContent.trackEvent("piece_view", { id: piece.id, title: piece.title, type: piece.type });
 }
 
 window.HBContent.ready().then(renderPiece);

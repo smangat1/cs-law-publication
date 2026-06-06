@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" fill="none">
+  <rect width="1400" height="900" fill="#0A0D14"/>
+  <path d="M90 90H1310V810H90V90Z" stroke="#2A3040" stroke-width="2"/>
+  <path d="M150 150H1250V750H150V150Z" stroke="#EF8F68" stroke-opacity="0.35"/>
+  <path d="M150 300H1250" stroke="#232A39"/>
+  <path d="M150 450H1250" stroke="#232A39"/>
+  <path d="M150 600H1250" stroke="#232A39"/>
+  <path d="M350 150V750" stroke="#232A39"/>
+  <path d="M700 150V750" stroke="#232A39"/>
+  <path d="M1050 150V750" stroke="#232A39"/>
+  <circle cx="1110" cy="250" r="120" fill="url(#paint0_radial)" fill-opacity="0.8"/>
+  <circle cx="320" cy="630" r="170" fill="url(#paint1_radial)" fill-opacity="0.65"/>
+  <path d="M226 194L1172 706" stroke="#EF8F68" stroke-opacity="0.32" stroke-width="2"/>
+  <path d="M226 706L1172 194" stroke="#F1E7D7" stroke-opacity="0.12" stroke-width="2"/>
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1110 250) rotate(90) scale(120)">
+      <stop stop-color="#EF8F68"/>
+      <stop offset="1" stop-color="#EF8F68" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="paint1_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(320 630) rotate(90) scale(170)">
+      <stop stop-color="#F1E7D7"/>
+      <stop offset="1" stop-color="#F1E7D7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

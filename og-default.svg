@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#F4F0E8"/>
+  <rect x="40" y="40" width="1120" height="550" rx="28" fill="#FBFAF5" stroke="#D8D1C5"/>
+  <path d="M120 130H1080" stroke="#E2D9CC"/>
+  <path d="M120 500H1080" stroke="#E2D9CC"/>
+  <path d="M120 170H1080" stroke="#EEE7DC"/>
+  <path d="M120 460H1080" stroke="#EEE7DC"/>
+  <text x="120" y="290" fill="#171717" font-family="Georgia, Times New Roman, serif" font-size="150" letter-spacing="-8">HB.</text>
+  <text x="126" y="345" fill="#7D1F1F" font-family="Arial, Helvetica, sans-serif" font-size="24" letter-spacing="7">A LOOSELY BOUND TECH LAW PUBLICATION</text>
+  <text x="120" y="430" fill="#5D5951" font-family="Arial, Helvetica, sans-serif" font-size="36">Essays, issues, and articles on governance, procedure, and technical institutions.</text>
+</svg>
