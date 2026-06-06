@@ -137,15 +137,13 @@ main {
 }
 
 .overview,
-.articles,
-.closing-note {
+.articles {
   position: relative;
   margin-top: 2.4rem;
 }
 
 .overview::before,
-.articles::before,
-.closing-note::before {
+.articles::before {
   content: "";
   position: absolute;
   top: -0.75rem;
@@ -156,16 +154,14 @@ main {
 }
 
 .overview-grid,
-.articles-intro,
-.closing-copy {
+.articles-intro {
   display: grid;
   grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
   gap: 1.25rem;
 }
 
 .overview-copy h2,
-.articles-copy h2,
-.closing-copy h2 {
+.articles-copy h2 {
   margin: 0 0 0.85rem;
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(2.35rem, 5vw, 4.3rem);
@@ -175,7 +171,6 @@ main {
 
 .overview-copy p,
 .articles-copy p,
-.closing-copy p,
 .article-entry p {
   margin: 0;
   max-width: 48rem;
@@ -200,25 +195,41 @@ main {
 
 .article-list {
   display: grid;
+  margin-top: 0.5rem;
 }
 
 .article-entry {
   display: grid;
   gap: 0.8rem;
-  padding: 1.35rem 0 1.55rem;
+  padding: 1.4rem 1rem 1.5rem 0;
   border-bottom: 1px solid var(--line);
-  color: var(--ink);
+  color: var(--ink) !important;
   text-decoration: none;
+  -webkit-text-fill-color: currentColor;
   transition:
     transform 180ms ease,
     border-color 180ms ease,
-    color 180ms ease;
+    color 180ms ease,
+    background-color 180ms ease;
+}
+
+.article-entry:link,
+.article-entry:visited,
+.article-entry:hover,
+.article-entry:active {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.article-entry * {
+  text-decoration: none !important;
 }
 
 .article-entry:hover,
 .article-entry:focus-visible {
   transform: translateX(6px);
   border-color: var(--line-strong);
+  background-color: rgba(255, 255, 252, 0.32);
 }
 
 .article-entry:hover h3,
@@ -252,11 +263,8 @@ main {
   font-size: clamp(2rem, 4vw, 3.1rem);
   line-height: 0.95;
   letter-spacing: -0.03em;
+  color: var(--ink);
   transition: color 180ms ease;
-}
-
-.closing-note {
-  padding-top: 0.25rem;
 }
 
 .reveal {
@@ -283,8 +291,7 @@ main {
   }
 
   .overview-grid,
-  .articles-intro,
-  .closing-copy {
+  .articles-intro {
     grid-template-columns: 1fr;
     gap: 0.65rem;
   }
