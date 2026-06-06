@@ -50,6 +50,29 @@ function hbSlugify(value) {
     .slice(0, 80);
 }
 
+function hbCountWords(blocks) {
+  return blocks
+    .map((block) => String(block.text || "").trim())
+    .filter(Boolean)
+    .join(" ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .length;
+}
+
+function hbEstimateReadTime(blocks) {
+  const wordCount = hbCountWords(blocks);
+
+  if (!wordCount) {
+    return "1 min read";
+  }
+
+  const fast = Math.max(1, Math.ceil(wordCount / 275));
+  const slow = Math.max(1, Math.ceil(wordCount / 200));
+
+  return fast === slow ? `${fast} min read` : `${fast}-${slow} min read`;
+}
+
 function hbNormalizePiece(piece) {
   const publishedAt = piece.publishedAt || new Date().toISOString().slice(0, 10);
   const blocks = Array.isArray(piece.blocks) && piece.blocks.length
@@ -67,7 +90,7 @@ function hbNormalizePiece(piece) {
     author: piece.author || "HB Desk",
     publishedAt,
     category: piece.category || "Category",
-    readTime: piece.readTime || "8 min read",
+    readTime: hbEstimateReadTime(blocks),
     dek: piece.dek || "",
     summary: piece.summary || piece.dek || "",
     issueId: piece.issueId || "",
@@ -332,6 +355,7 @@ window.HBContent = {
   createIssueHref: hbCreateIssueHref,
   createTopicHref: hbCreateTopicHref,
   deletePiece: hbDeletePiece,
+  estimateReadTime: hbEstimateReadTime,
   exportSiteData: hbExportSiteData,
   formatDate: hbFormatDate,
   getAllPieces: hbGetAllPieces,

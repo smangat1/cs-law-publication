@@ -90,6 +90,7 @@ a {
   display: flex;
   gap: 1rem;
   padding-top: 0.4rem;
+  align-items: center;
 }
 
 .site-nav a {
@@ -100,6 +101,13 @@ a {
 
 .site-nav a[aria-current="page"] {
   color: var(--ink);
+}
+
+.studio-chip-output {
+  border-style: dashed;
+  color: rgba(22, 22, 22, 0.74);
+  background: rgba(255, 255, 255, 0.62);
+  cursor: default;
 }
 
 .page-hero,
