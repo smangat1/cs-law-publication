@@ -18,97 +18,137 @@
 </head>
 <body>
   <div class="page-shell">
+    <nav class="dot-nav" aria-label="Homepage sections">
+      <a class="dot-link is-active" href="#title" data-section="title" aria-label="Go to title section"></a>
+      <a class="dot-link" href="#featured" data-section="featured" aria-label="Go to featured section"></a>
+      <a class="dot-link" href="#archive" data-section="archive" aria-label="Go to archive section"></a>
+      <a class="dot-link" href="#about" data-section="about" aria-label="Go to about section"></a>
+    </nav>
+
     <header class="masthead" aria-label="HB publication masthead">
-      <a class="masthead-mark" href="#top" aria-label="Return to top">
+      <a class="masthead-brand" href="index.html" aria-label="HB home">
         <span class="masthead-title">HB.</span>
         <span class="masthead-tagline">a loosely bound tech law publication</span>
       </a>
+      <nav class="masthead-links" aria-label="Primary">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="about.html">About</a>
+      </nav>
     </header>
 
-    <main id="top">
-      <section class="hero" aria-labelledby="hero-title">
-        <h1 id="hero-title" class="hero-title">HB.</h1>
-        <p class="hero-scroll">scroll</p>
+    <main class="snap-shell">
+      <section id="title" class="snap-page hero-page" data-section="title" aria-labelledby="hero-title">
+        <div class="page-inner page-inner-hero">
+          <h1 id="hero-title" class="hero-title">HB.</h1>
+          <p class="hero-scroll">scroll</p>
+        </div>
       </section>
 
-      <section class="overview reveal" aria-labelledby="overview-title">
-        <div class="overview-grid">
-          <div class="section-label">Desk Note</div>
-          <div class="overview-copy">
-            <h2 id="overview-title">Essays on where systems, institutions, and law start leaning on each other.</h2>
+      <section id="featured" class="snap-page featured-page" data-section="featured" aria-labelledby="featured-title">
+        <div class="page-inner">
+          <div class="section-kicker">Featured Articles</div>
+          <div class="section-header">
+            <h2 id="featured-title">Recent arguments, notes, and essays with editorial weight.</h2>
             <p>
-              HB is formal enough to take the work seriously and loose enough to stay curious.
-              It reads for pressure points: governance, procedure, accountability, and the
-              places where technical design quietly turns into public order.
+              The front page should read like a curated journal desk, not a content feed.
+              These pieces are the first layer of the publication's voice.
             </p>
+          </div>
+
+          <div class="featured-grid">
+            <a class="featured-lead" href="articles/model-opacity.html" aria-label="Read When Model Opacity Becomes a Due Process Problem">
+              <div class="entry-meta">
+                <span>Article</span>
+                <span class="entry-rule" aria-hidden="true"></span>
+                <span>8 min read</span>
+              </div>
+              <h3>When Model Opacity Becomes a Due Process Problem</h3>
+              <p>
+                A draft essay on how inscrutable automated decisions move from technical
+                inconvenience into procedural harm.
+              </p>
+            </a>
+
+            <div class="featured-stack">
+              <a class="featured-item" href="articles/scraping-consent.html" aria-label="Read Scraping, Consent, and the New Public Access Fights">
+                <div class="entry-meta">
+                  <span>Essay</span>
+                  <span class="entry-rule" aria-hidden="true"></span>
+                  <span>6 min read</span>
+                </div>
+                <h3>Scraping, Consent, and the New Public Access Fights</h3>
+              </a>
+
+              <a class="featured-item" href="articles/law-school-ai.html" aria-label="Read Law School AI Policies Are Becoming Shadow Curricula">
+                <div class="entry-meta">
+                  <span>Article</span>
+                  <span class="entry-rule" aria-hidden="true"></span>
+                  <span>7 min read</span>
+                </div>
+                <h3>Law School AI Policies Are Becoming Shadow Curricula</h3>
+              </a>
+
+              <a class="featured-item" href="articles/moderation-audit-trail.html" aria-label="Read Content Moderation Needs an Audit Trail, Not a Press Release">
+                <div class="entry-meta">
+                  <span>Essay</span>
+                  <span class="entry-rule" aria-hidden="true"></span>
+                  <span>7 min read</span>
+                </div>
+                <h3>Content Moderation Needs an Audit Trail, Not a Press Release</h3>
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="articles reveal" aria-labelledby="articles-title">
-        <div class="articles-intro">
-          <div class="section-label">Articles</div>
-          <div class="articles-copy">
-            <h2 id="articles-title">Sample pieces</h2>
+      <section id="archive" class="snap-page archive-page" data-section="archive" aria-labelledby="archive-title">
+        <div class="page-inner">
+          <div class="section-kicker">Archive Gateway</div>
+          <div class="section-header">
+            <h2 id="archive-title">Browse HB through distinct publication forms.</h2>
             <p>
-              Early placeholders for the kinds of arguments, notes, and longer essays the
-              publication can hold.
+              Larger issues live beside shorter articles and longer essays. The archive
+              should feel navigable, separated, and intentional.
             </p>
           </div>
+
+          <div class="bucket-grid">
+            <a class="bucket-card" href="archive/issues.html" aria-label="Browse issues">
+              <span class="bucket-label">Issues</span>
+              <h3>Mini publications with their own framing, note, and contained pieces.</h3>
+              <p>Enter the issue shelf</p>
+            </a>
+            <a class="bucket-card" href="archive/articles.html" aria-label="Browse articles">
+              <span class="bucket-label">Articles</span>
+              <h3>Sharper, more direct interventions built for clarity and pace.</h3>
+              <p>Browse articles</p>
+            </a>
+            <a class="bucket-card" href="archive/essays.html" aria-label="Browse essays">
+              <span class="bucket-label">Essays</span>
+              <h3>Longer arguments that stay with one problem until it starts to open.</h3>
+              <p>Browse essays</p>
+            </a>
+          </div>
         </div>
+      </section>
 
-        <div class="article-list" role="list">
-          <a class="article-entry" href="articles/model-opacity.html" aria-label="Read article on model opacity and due process" role="listitem">
-            <div class="article-meta">
-              <span class="article-category">Procedure and AI</span>
-              <span class="article-separator" aria-hidden="true"></span>
-              <span class="article-time">8 min read</span>
-            </div>
-            <h3>When Model Opacity Becomes a Due Process Problem</h3>
+      <section id="about" class="snap-page about-page" data-section="about" aria-labelledby="about-title">
+        <div class="page-inner page-inner-about">
+          <div class="section-kicker">About</div>
+          <div class="about-copy">
+            <h2 id="about-title">HB tracks the legal edges of technical systems without pretending neutrality is the same thing as clarity.</h2>
             <p>
-              A draft essay on how inscrutable automated decisions move from technical
-              inconvenience into procedural harm.
+              It is a small publication for pressure points: governance, procedure,
+              discretion, institutional design, and the way technical defaults start
+              behaving like public rules.
             </p>
-          </a>
-
-          <a class="article-entry" href="articles/scraping-consent.html" aria-label="Read article on scraping and public access" role="listitem">
-            <div class="article-meta">
-              <span class="article-category">Access and Extraction</span>
-              <span class="article-separator" aria-hidden="true"></span>
-              <span class="article-time">6 min read</span>
-            </div>
-            <h3>Scraping, Consent, and the New Public Access Fights</h3>
             <p>
-              Notes on data extraction, contractual fences, and why "public" online
-              space keeps shrinking under private ordering.
+              The tone is formal enough to take the work seriously and loose enough to
+              stay curious.
             </p>
-          </a>
-
-          <a class="article-entry" href="articles/law-school-ai.html" aria-label="Read article on law school AI policies" role="listitem">
-            <div class="article-meta">
-              <span class="article-category">Education and Practice</span>
-              <span class="article-separator" aria-hidden="true"></span>
-              <span class="article-time">7 min read</span>
-            </div>
-            <h3>Law School AI Policies Are Becoming Shadow Curricula</h3>
-            <p>
-              A look at how classroom restrictions and permissions shape students'
-              practical understanding of authorship, delegation, and trust.
-            </p>
-          </a>
-
-          <a class="article-entry" href="articles/moderation-audit-trail.html" aria-label="Read article on content moderation logs" role="listitem">
-            <div class="article-meta">
-              <span class="article-category">Governance Records</span>
-              <span class="article-separator" aria-hidden="true"></span>
-              <span class="article-time">7 min read</span>
-            </div>
-            <h3>Content Moderation Needs an Audit Trail, Not a Press Release</h3>
-            <p>
-              Sketching a publication-ready argument for traceable enforcement,
-              appellate structure, and procedural memory in platform governance.
-            </p>
-          </a>
+            <a class="text-link" href="about.html">Read the editorial note</a>
+          </div>
         </div>
       </section>
     </main>

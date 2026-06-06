@@ -1,37 +1,65 @@
 const body = document.body;
-const hero = document.querySelector(".hero");
-const revealItems = document.querySelectorAll(".reveal");
+const snapShell = document.querySelector(".snap-shell");
+const sections = [...document.querySelectorAll(".snap-page[data-section]")];
+const dots = [...document.querySelectorAll(".dot-link[data-section]")];
+const heroSection = document.querySelector('.snap-page[data-section="title"]');
+
+const setActiveSection = (sectionName) => {
+  dots.forEach((dot) => {
+    dot.classList.toggle("is-active", dot.dataset.section === sectionName);
+  });
+};
 
 const setMastheadState = () => {
-  if (!hero) {
+  if (!snapShell || !heroSection) {
     return;
   }
 
-  const triggerPoint = hero.offsetHeight * 0.28;
-  body.classList.toggle("scrolled", window.scrollY > triggerPoint);
+  const triggerPoint = heroSection.clientHeight * 0.28;
+  body.classList.toggle("scrolled", snapShell.scrollTop > triggerPoint);
 };
 
-const revealObserver = new IntersectionObserver(
+const sectionObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) {
         return;
       }
 
-      entry.target.classList.add("is-visible");
-      revealObserver.unobserve(entry.target);
+      setActiveSection(entry.target.dataset.section);
     });
   },
   {
-    threshold: 0.12,
-    rootMargin: "0px 0px -8% 0px",
+    root: snapShell,
+    threshold: 0.6,
   }
 );
 
-revealItems.forEach((item) => {
-  revealObserver.observe(item);
+sections.forEach((section) => {
+  sectionObserver.observe(section);
+});
+
+dots.forEach((dot) => {
+  dot.addEventListener("click", (event) => {
+    event.preventDefault();
+    const target = document.getElementById(dot.dataset.section);
+
+    if (!target) {
+      return;
+    }
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
 });
 
 setMastheadState();
-window.addEventListener("scroll", setMastheadState, { passive: true });
+setActiveSection("title");
+
+if (snapShell) {
+  snapShell.addEventListener("scroll", setMastheadState, { passive: true });
+}
+
 window.addEventListener("resize", setMastheadState);

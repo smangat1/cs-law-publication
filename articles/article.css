@@ -51,16 +51,49 @@ body::before {
   backdrop-filter: blur(16px);
 }
 
+.topbar-brand {
+  display: inline-grid;
+  gap: 0.08rem;
+}
+
 .home-link,
-.issue-mark {
+.issue-mark,
+.topbar-nav a {
   color: var(--ink);
   text-decoration: none;
+}
+
+.issue-mark,
+.topbar-nav a {
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-size: 0.8rem;
 }
 
 .home-link {
+  color: var(--accent);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+  line-height: 0.82;
+  letter-spacing: -0.04em;
+}
+
+.topbar-tagline {
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.topbar-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  align-items: center;
+  justify-content: end;
+}
+
+.topbar-nav a[aria-current="page"] {
   color: var(--accent);
 }
 
@@ -148,6 +181,10 @@ h1 {
   .topbar {
     flex-direction: column;
     align-items: start;
+  }
+
+  .topbar-nav {
+    justify-content: start;
   }
 
   .article-page {
