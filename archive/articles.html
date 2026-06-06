@@ -24,7 +24,8 @@
   <link rel="stylesheet" href="../publication.css">
 </head>
 <body>
-  <main class="site-page">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <main id="main-content" class="site-page" tabindex="-1">
     <header class="site-topbar">
       <a class="site-brand" href="../index.html" aria-label="HB home">
         <span class="site-brand-title">HB.</span>
@@ -49,7 +50,7 @@
       <div class="archive-controls">
         <label class="archive-control">
           <span>Search</span>
-          <input id="archive-search" type="search" placeholder="Search titles and deks">
+          <input id="archive-search" type="search" placeholder="Search titles and deks" autocomplete="off">
         </label>
 
         <label class="archive-control">
@@ -68,10 +69,10 @@
           </select>
         </label>
       </div>
-      <p id="archive-results-count" class="archive-results-count">Loading articles…</p>
+      <p id="archive-results-count" class="archive-results-count" aria-live="polite" aria-atomic="true">Loading articles…</p>
     </section>
 
-    <section id="article-grid" class="piece-grid"></section>
+    <section id="article-grid" class="piece-grid" aria-live="polite" aria-busy="true"></section>
   </main>
   <script src="../analytics.js"></script>
   <script src="../pieces.js"></script>

@@ -3,10 +3,16 @@ const snapShell = document.querySelector(".snap-shell");
 const sections = [...document.querySelectorAll(".snap-page[data-section]")];
 const dots = [...document.querySelectorAll(".dot-link[data-section]")];
 const heroSection = document.querySelector('.snap-page[data-section="title"]');
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 const setActiveSection = (sectionName) => {
   dots.forEach((dot) => {
     dot.classList.toggle("is-active", dot.dataset.section === sectionName);
+    if (dot.dataset.section === sectionName) {
+      dot.setAttribute("aria-current", "true");
+    } else {
+      dot.removeAttribute("aria-current");
+    }
   });
 };
 
@@ -49,7 +55,7 @@ dots.forEach((dot) => {
     }
 
     target.scrollIntoView({
-      behavior: "smooth",
+      behavior: prefersReducedMotion.matches ? "auto" : "smooth",
       block: "start",
     });
   });

@@ -27,12 +27,13 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <div class="page-shell">
     <nav class="dot-nav" aria-label="Homepage sections">
-      <a class="dot-link is-active" href="#title" data-section="title" aria-label="Go to title section"></a>
-      <a class="dot-link" href="#featured" data-section="featured" aria-label="Go to featured section"></a>
-      <a class="dot-link" href="#archive" data-section="archive" aria-label="Go to archive section"></a>
-      <a class="dot-link" href="#about" data-section="about" aria-label="Go to about section"></a>
+      <a class="dot-link is-active" href="#title" data-section="title" aria-label="Go to title section" aria-current="true"><span class="sr-only">Title section</span></a>
+      <a class="dot-link" href="#featured" data-section="featured" aria-label="Go to featured section"><span class="sr-only">Featured section</span></a>
+      <a class="dot-link" href="#archive" data-section="archive" aria-label="Go to archive section"><span class="sr-only">Archive section</span></a>
+      <a class="dot-link" href="#about" data-section="about" aria-label="Go to about section"><span class="sr-only">About section</span></a>
     </nav>
 
     <header class="masthead" aria-label="HB publication masthead">
@@ -47,7 +48,7 @@
       </nav>
     </header>
 
-    <main class="snap-shell">
+    <main id="main-content" class="snap-shell" tabindex="-1">
       <section id="title" class="snap-page hero-page" data-section="title" aria-labelledby="hero-title">
         <div class="page-inner page-inner-hero">
           <h1 id="hero-title" class="hero-title">HB.</h1>

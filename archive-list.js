@@ -61,6 +61,7 @@ function renderArchiveList(containerId, type) {
         if (resultsCount) {
           resultsCount.textContent = `0 ${type}s shown`;
         }
+        container.setAttribute("aria-busy", "false");
         container.innerHTML = `
           <div class="empty-state archive-empty-state">
             <p class="eyebrow">No ${type}s yet</p>
@@ -112,6 +113,7 @@ function renderArchiveList(containerId, type) {
         }
 
         if (!filtered.length) {
+          container.setAttribute("aria-busy", "false");
           container.innerHTML = `
             <div class="empty-state archive-empty-state">
               <p class="eyebrow">No matches</p>
@@ -122,6 +124,7 @@ function renderArchiveList(containerId, type) {
           return;
         }
 
+        container.setAttribute("aria-busy", "false");
         container.replaceChildren(...filtered.map(buildPieceCard));
       };
 
