@@ -18,7 +18,8 @@ window.HBContent.ready().then(async () => {
     return;
   }
 
-  authorsGrid.replaceChildren(...authors.map((author) => {
+  authorsGrid.replaceChildren(...await Promise.all(authors.map(async (author) => {
+    const profile = await window.HBContent.getAuthorProfile(author.name);
     const card = document.createElement("a");
     card.className = "piece-card";
     card.href = window.HBContent.createAuthorHref(author.name);
@@ -31,10 +32,10 @@ window.HBContent.ready().then(async () => {
     title.textContent = author.name;
 
     const dek = document.createElement("p");
-    dek.textContent = "Browse this author or desk across the publication.";
+    dek.textContent = profile?.description || "Browse this author or desk across the publication.";
 
     card.append(label, title, dek);
     return card;
-  }));
+  })));
   window.HBContent.trackEvent("page_view", { surface: "authors" });
 });

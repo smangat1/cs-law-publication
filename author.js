@@ -6,13 +6,22 @@ function renderAuthorState(title, copy) {
     return;
   }
 
-  authorRoot.innerHTML = `
-    <section class="page-hero">
-      <p class="eyebrow">Author</p>
-      <h1>${title}</h1>
-      <p class="lede">${copy}</p>
-    </section>
-  `;
+  const hero = document.createElement("section");
+  hero.className = "page-hero";
+
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = "Author";
+
+  const heading = document.createElement("h1");
+  heading.textContent = title;
+
+  const lede = document.createElement("p");
+  lede.className = "lede";
+  lede.textContent = copy;
+
+  hero.append(eyebrow, heading, lede);
+  authorRoot.replaceChildren(hero);
 }
 
 window.HBContent.ready().then(async () => {
@@ -30,12 +39,17 @@ window.HBContent.ready().then(async () => {
     return;
   }
 
-  const pieces = await window.HBContent.getPiecesByAuthor(authorName);
+  const [pieces, profile] = await Promise.all([
+    window.HBContent.getPiecesByAuthor(authorName),
+    window.HBContent.getAuthorProfile(authorName)
+  ]);
   renderAuthorState(
     authorName,
-    pieces.length
+    profile?.description || (
+      pieces.length
       ? `${pieces.length} published ${pieces.length === 1 ? "piece" : "pieces"} currently appear under this byline.`
       : "No published pieces currently appear under this byline."
+    )
   );
 
   if (pieces.length) {
@@ -46,11 +60,18 @@ window.HBContent.ready().then(async () => {
       const card = document.createElement("a");
       card.className = "piece-card";
       card.href = window.HBContent.createHref(piece);
-      card.innerHTML = `
-        <span class="panel-label">${window.HBContent.typeLabel(piece.type)} / ${piece.readTime}</span>
-        <h3>${piece.title}</h3>
-        <p>${piece.dek}</p>
-      `;
+
+      const label = document.createElement("span");
+      label.className = "panel-label";
+      label.textContent = `${window.HBContent.typeLabel(piece.type)} / ${piece.readTime}`;
+
+      const title = document.createElement("h3");
+      title.textContent = piece.title;
+
+      const dek = document.createElement("p");
+      dek.textContent = piece.dek;
+
+      card.append(label, title, dek);
       grid.appendChild(card);
     });
 
@@ -59,10 +80,11 @@ window.HBContent.ready().then(async () => {
 
   window.HBContent.setMeta({
     title: authorName,
-    description: pieces.length
+    description: profile?.description || (pieces.length
       ? `Browse ${pieces.length} HB ${pieces.length === 1 ? "piece" : "pieces"} by ${authorName}.`
-      : `Browse the ${authorName} byline in HB.`,
-    url: window.HBContent.createAuthorPublicUrl(authorName)
+      : `Browse the ${authorName} byline in HB.`),
+    url: window.HBContent.createAuthorPublicUrl(authorName),
+    image: profile?.ogImagePublicUrl || pieces[0]?.thumbnailPublicUrl
   });
   window.HBContent.trackEvent("author_view", { name: authorName, count: pieces.length });
 });

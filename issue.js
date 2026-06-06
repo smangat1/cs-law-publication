@@ -52,6 +52,26 @@ function buildIssuePieceCard(piece) {
   return card;
 }
 
+function buildIssueSection(titleText, eyebrowText, pieces) {
+  const section = document.createElement("section");
+  section.className = "issue-field";
+
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = eyebrowText;
+
+  const title = document.createElement("h2");
+  title.className = "issue-subheading";
+  title.textContent = titleText;
+
+  const grid = document.createElement("div");
+  grid.className = "piece-grid issue-piece-grid";
+  grid.replaceChildren(...pieces.map(buildIssuePieceCard));
+
+  section.append(eyebrow, title, grid);
+  return section;
+}
+
 async function renderIssue() {
   if (!issueRoot || !issueId) {
     renderIssueMissing("No issue was specified.");
@@ -71,59 +91,104 @@ async function renderIssue() {
   const [leadPiece, ...restPieces] = pieces;
   const topicSummary = [...new Set(pieces.map((piece) => piece.category).filter(Boolean))].slice(0, 3).join(" / ") || "No topics yet";
 
-  issueRoot.innerHTML = `
-    <section class="issue-stage">
-      <div class="issue-stage__hero">
-        <p class="issue-stage__eyebrow">${issue.label}</p>
-        <h1>${issue.title}</h1>
-        <p class="issue-stage__dek">${issue.dek}</p>
-      </div>
-      <div class="issue-stage__sidecar">
-        ${issue.coverImage ? `<div class="issue-stage__cover" style="background-image: url('${issue.coverImage}')"></div>` : ""}
-        <p class="issue-stage__caption">Issue frame</p>
-        <p>${issue.editorNote}</p>
-        <div class="issue-stage__meta">
-          <span>${pieces.length} pieces</span>
-          <span>${window.HBContent.formatDate(issue.publishedAt)}</span>
-          <span>${topicSummary}</span>
-        </div>
-      </div>
-    </section>
+  const stage = document.createElement("section");
+  stage.className = "issue-stage";
 
-    <section class="issue-world">
-      <div class="issue-world__rail">
-        <p class="eyebrow">Contents</p>
-        <div class="issue-toc"></div>
-      </div>
-      <div class="issue-world__body">
-        <section class="issue-lead-shell">
-          <p class="eyebrow">Lead Piece</p>
-          <div class="issue-lead-card"></div>
-        </section>
-        <section class="issue-field">
-          <p class="eyebrow">Contained pieces</p>
-          <div class="piece-grid issue-piece-grid"></div>
-        </section>
-      </div>
-    </section>
-  `;
+  const stageHero = document.createElement("div");
+  stageHero.className = "issue-stage__hero";
 
-  const lead = issueRoot.querySelector(".issue-lead-card");
-  const grid = issueRoot.querySelector(".issue-piece-grid");
-  const toc = issueRoot.querySelector(".issue-toc");
+  const stageEyebrow = document.createElement("p");
+  stageEyebrow.className = "issue-stage__eyebrow";
+  stageEyebrow.textContent = issue.label;
+
+  const stageTitle = document.createElement("h1");
+  stageTitle.textContent = issue.title;
+
+  const stageDek = document.createElement("p");
+  stageDek.className = "issue-stage__dek";
+  stageDek.textContent = issue.dek;
+
+  stageHero.append(stageEyebrow, stageTitle, stageDek);
+
+  const sidecar = document.createElement("div");
+  sidecar.className = "issue-stage__sidecar";
+
+  if (issue.coverImage) {
+    const cover = document.createElement("div");
+    cover.className = "issue-stage__cover";
+    cover.style.backgroundImage = `url('${issue.coverImage}')`;
+    sidecar.appendChild(cover);
+  }
+
+  const caption = document.createElement("p");
+  caption.className = "issue-stage__caption";
+  caption.textContent = "Issue frame";
+
+  const note = document.createElement("p");
+  note.textContent = issue.editorNote;
+
+  const meta = document.createElement("div");
+  meta.className = "issue-stage__meta";
+  [ `${pieces.length} pieces`, window.HBContent.formatDate(issue.publishedAt), topicSummary ].forEach((value) => {
+    const chip = document.createElement("span");
+    chip.textContent = value;
+    meta.appendChild(chip);
+  });
+
+  sidecar.append(caption, note, meta);
+  stage.append(stageHero, sidecar);
+
+  const issueWorld = document.createElement("section");
+  issueWorld.className = "issue-world";
+
+  const rail = document.createElement("div");
+  rail.className = "issue-world__rail";
+  const railEyebrow = document.createElement("p");
+  railEyebrow.className = "eyebrow";
+  railEyebrow.textContent = "Contents";
+  const toc = document.createElement("div");
+  toc.className = "issue-toc";
+  rail.append(railEyebrow, toc);
+
+  const body = document.createElement("div");
+  body.className = "issue-world__body";
+  const leadShell = document.createElement("section");
+  leadShell.className = "issue-lead-shell";
+  const leadEyebrow = document.createElement("p");
+  leadEyebrow.className = "eyebrow";
+  leadEyebrow.textContent = "Lead Piece";
+  const lead = document.createElement("div");
+  lead.className = "issue-lead-card";
+  leadShell.append(leadEyebrow, lead);
+  body.appendChild(leadShell);
+
+  issueWorld.append(rail, body);
+  issueRoot.replaceChildren(stage, issueWorld);
+
+  const articlePieces = pieces.filter((piece) => piece.type === "article" && piece.id !== leadPiece?.id);
+  const essayPieces = pieces.filter((piece) => piece.type === "essay" && piece.id !== leadPiece?.id);
 
   if (leadPiece && lead) {
     const leadLink = document.createElement("a");
     leadLink.className = "issue-lead-link";
     leadLink.href = window.HBContent.createHref(leadPiece);
-    leadLink.innerHTML = `
-      <span class="panel-label">${window.HBContent.typeLabel(leadPiece.type)} / ${leadPiece.readTime}</span>
-      <h3>${leadPiece.title}</h3>
-      <p>${leadPiece.dek}</p>
-    `;
+    const leadLabel = document.createElement("span");
+    leadLabel.className = "panel-label";
+    leadLabel.textContent = `${window.HBContent.typeLabel(leadPiece.type)} / ${leadPiece.readTime}`;
+    const leadTitle = document.createElement("h3");
+    leadTitle.textContent = leadPiece.title;
+    const leadDek = document.createElement("p");
+    leadDek.textContent = leadPiece.dek;
+    leadLink.append(leadLabel, leadTitle, leadDek);
     lead.appendChild(leadLink);
   } else if (lead) {
-    lead.innerHTML = `<div class="issue-empty-card"><p class="page-copy">This issue does not yet contain a lead piece.</p></div>`;
+    const empty = document.createElement("div");
+    empty.className = "issue-empty-card";
+    const copy = document.createElement("p");
+    copy.className = "page-copy";
+    copy.textContent = "This issue does not yet contain a lead piece.";
+    empty.appendChild(copy);
+    lead.appendChild(empty);
   }
 
   if (pieces.length) {
@@ -131,36 +196,55 @@ async function renderIssue() {
       const tocLink = document.createElement("a");
       tocLink.className = "issue-toc-link";
       tocLink.href = window.HBContent.createHref(piece);
-      tocLink.innerHTML = `
-        <span class="issue-toc-number">${String(index + 1).padStart(2, "0")}</span>
-        <span class="issue-toc-copy">
-          <strong>${piece.title}</strong>
-          <small>${piece.category} / ${piece.readTime}</small>
-        </span>
-      `;
+      const number = document.createElement("span");
+      number.className = "issue-toc-number";
+      number.textContent = String(index + 1).padStart(2, "0");
+      const copy = document.createElement("span");
+      copy.className = "issue-toc-copy";
+      const strong = document.createElement("strong");
+      strong.textContent = piece.title;
+      const small = document.createElement("small");
+      small.textContent = `${piece.category} / ${window.HBContent.typeLabel(piece.type)} / ${piece.readTime}`;
+      copy.append(strong, small);
+      tocLink.append(number, copy);
       toc.appendChild(tocLink);
     });
 
-    if (restPieces.length) {
-      grid.replaceChildren(...restPieces.map(buildIssuePieceCard));
-    } else if (leadPiece) {
-      grid.innerHTML = `
-        <div class="empty-state archive-empty-state">
-          <p class="eyebrow">Single-piece issue</p>
-          <h3>This issue currently turns on one lead argument.</h3>
-          <p class="page-copy">Additional contained pieces can be added in the repo content source.</p>
-        </div>
-      `;
+    if (articlePieces.length) {
+      body.appendChild(buildIssueSection("Issue articles", "Articles", articlePieces));
+    }
+
+    if (essayPieces.length) {
+      body.appendChild(buildIssueSection("Issue essays", "Essays", essayPieces));
+    }
+
+    if (!articlePieces.length && !essayPieces.length && leadPiece) {
+      const single = document.createElement("div");
+      single.className = "empty-state archive-empty-state";
+      const eyebrow = document.createElement("p");
+      eyebrow.className = "eyebrow";
+      eyebrow.textContent = "Single-piece issue";
+      const title = document.createElement("h3");
+      title.textContent = "This issue currently turns on one lead argument.";
+      const copy = document.createElement("p");
+      copy.className = "page-copy";
+      copy.textContent = "Additional contained pieces can be added in the repo content source.";
+      single.append(eyebrow, title, copy);
+      body.appendChild(single);
     }
   } else {
-    toc.innerHTML = `
-      <div class="empty-state archive-empty-state">
-        <p class="eyebrow">No contents yet</p>
-        <h3>This issue has no published pieces attached to it.</h3>
-        <p class="page-copy">Check the issue's piece IDs in the repo content source.</p>
-      </div>
-    `;
-    grid.innerHTML = "";
+    const empty = document.createElement("div");
+    empty.className = "empty-state archive-empty-state";
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "eyebrow";
+    eyebrow.textContent = "No contents yet";
+    const title = document.createElement("h3");
+    title.textContent = "This issue has no published pieces attached to it.";
+    const copy = document.createElement("p");
+    copy.className = "page-copy";
+    copy.textContent = "Check the issue's piece IDs in the repo content source.";
+    empty.append(eyebrow, title, copy);
+    toc.replaceChildren(empty);
   }
 
   window.HBContent.setMeta({

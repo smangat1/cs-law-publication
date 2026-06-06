@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=(), payment=(), usb=(), browsing-topics=()">
   <title>Articles | HB</title>
   <meta name="description" content="Browse HB articles: tighter, faster interventions on governance, procedure, and technical law.">
   <meta name="theme-color" content="#f4efe6">
@@ -25,7 +28,7 @@
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
-  <main id="main-content" class="site-page" tabindex="-1">
+  <main id="main-content" class="site-page" tabindex="-1" data-archive-type="article" data-archive-grid="article-grid">
     <header class="site-topbar">
       <a class="site-brand" href="../index.html" aria-label="HB home">
         <span class="site-brand-title">HB.</span>
@@ -77,6 +80,6 @@
   <script src="../analytics.js"></script>
   <script src="../pieces.js"></script>
   <script src="../archive-list.js"></script>
-  <script>window.HBArchive.renderArchiveList("article-grid", "article");</script>
+  <script src="../archive-page.js"></script>
 </body>
 </html>

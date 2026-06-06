@@ -5,7 +5,25 @@ function buildPieceCard(piece) {
 
   const label = document.createElement("span");
   label.className = "panel-label";
-  label.textContent = `${piece.readTime} / ${window.HBContent.formatDate(piece.publishedAt)}`;
+  label.textContent = `${window.HBContent.typeLabel(piece.type)} / ${piece.readTime}`;
+
+  const meta = document.createElement("div");
+  meta.className = "entry-meta";
+
+  const published = document.createElement("span");
+  published.textContent = window.HBContent.formatDate(piece.publishedAt);
+  meta.appendChild(published);
+
+  if (piece.issueId) {
+    const separator = document.createElement("span");
+    separator.className = "entry-rule";
+    separator.setAttribute("aria-hidden", "true");
+    meta.appendChild(separator);
+
+    const issue = document.createElement("span");
+    issue.textContent = piece.issueLabel || "Issue";
+    meta.appendChild(issue);
+  }
 
   const title = document.createElement("h3");
   title.textContent = piece.title;
@@ -17,11 +35,11 @@ function buildPieceCard(piece) {
     const thumb = document.createElement("div");
     thumb.className = "piece-thumb";
     thumb.style.backgroundImage = `linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)), url("${piece.thumbnail}")`;
-    card.append(label, thumb, title, dek);
+    card.append(label, meta, thumb, title, dek);
     return card;
   }
 
-  card.append(label, title, dek);
+  card.append(label, meta, title, dek);
   return card;
 }
 

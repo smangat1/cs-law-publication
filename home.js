@@ -11,7 +11,14 @@ function buildFeaturedLead(piece) {
 
   const meta = document.createElement("div");
   meta.className = "entry-meta";
-  meta.innerHTML = `<span>${window.HBContent.typeLabel(piece.type)}</span><span class="entry-rule" aria-hidden="true"></span><span>${piece.readTime}</span>`;
+  const type = document.createElement("span");
+  type.textContent = window.HBContent.typeLabel(piece.type);
+  const rule = document.createElement("span");
+  rule.className = "entry-rule";
+  rule.setAttribute("aria-hidden", "true");
+  const readTime = document.createElement("span");
+  readTime.textContent = piece.readTime;
+  meta.append(type, rule, readTime);
 
   const title = document.createElement("h3");
   title.textContent = piece.title;
@@ -42,7 +49,14 @@ function buildFeaturedItem(piece) {
 
   const meta = document.createElement("div");
   meta.className = "entry-meta";
-  meta.innerHTML = `<span>${window.HBContent.typeLabel(piece.type)}</span><span class="entry-rule" aria-hidden="true"></span><span>${piece.readTime}</span>`;
+  const type = document.createElement("span");
+  type.textContent = window.HBContent.typeLabel(piece.type);
+  const rule = document.createElement("span");
+  rule.className = "entry-rule";
+  rule.setAttribute("aria-hidden", "true");
+  const readTime = document.createElement("span");
+  readTime.textContent = piece.readTime;
+  meta.append(type, rule, readTime);
 
   const title = document.createElement("h3");
   title.textContent = piece.title;

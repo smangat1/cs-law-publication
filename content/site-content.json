@@ -57,7 +57,8 @@
       "readTime": "8 min read",
       "dek": "An essay on how inscrutable automated decisions move from technical inconvenience into procedural harm.",
       "summary": "A HB article on how automated opacity turns from technical complexity into a due process and accountability problem.",
-      "thumbnail": "",
+      "thumbnail": "art/model-opacity.svg",
+      "ogImage": "art/model-opacity.svg",
       "issueId": "issue-1",
       "featured": true,
       "relatedIds": [
@@ -116,7 +117,8 @@
       "readTime": "6 min read",
       "dek": "Notes on data extraction, contractual fences, and why public online space keeps shrinking under private ordering.",
       "summary": "A HB essay on scraping disputes, contractual fences, and the shrinking practical meaning of public online space.",
-      "thumbnail": "",
+      "thumbnail": "art/scraping-consent.svg",
+      "ogImage": "art/scraping-consent.svg",
       "issueId": "issue-1",
       "featured": true,
       "relatedIds": [
@@ -171,7 +173,8 @@
       "readTime": "7 min read",
       "dek": "A look at how classroom restrictions and permissions shape students' practical understanding of authorship, delegation, and trust.",
       "summary": "A HB article on how classroom AI policies quietly teach authorship, delegation, and professional responsibility.",
-      "thumbnail": "",
+      "thumbnail": "art/law-school-ai.svg",
+      "ogImage": "art/law-school-ai.svg",
       "issueId": "issue-1",
       "featured": true,
       "relatedIds": [
@@ -226,7 +229,8 @@
       "readTime": "7 min read",
       "dek": "Sketching a publication-ready argument for traceable enforcement, appellate structure, and procedural memory in platform governance.",
       "summary": "A HB essay arguing that platform legitimacy depends on durable audit trails, records, and reviewable moderation procedures.",
-      "thumbnail": "",
+      "thumbnail": "art/moderation-audit.svg",
+      "ogImage": "art/moderation-audit.svg",
       "issueId": "issue-1",
       "featured": true,
       "relatedIds": [
@@ -269,5 +273,45 @@
         }
       ]
     }
-  ]
+  ],
+  "topicProfiles": {
+    "Procedure and AI": {
+      "description": "How automated systems inherit procedural expectations once their outputs start affecting rights, status, and challengeable decisions.",
+      "ogImage": "art/model-opacity.svg"
+    },
+    "Access and Extraction": {
+      "description": "Disputes over scraping, visibility, contractual fences, and who gets to structure public-facing information after it has been exposed.",
+      "ogImage": "art/scraping-consent.svg"
+    },
+    "Education and Practice": {
+      "description": "The professional habits institutions quietly teach through classroom rules, workflow design, and tool governance.",
+      "ogImage": "art/law-school-ai.svg"
+    },
+    "Governance Records": {
+      "description": "Records, audit trails, and procedural memory in institutions that exercise discretion at technical scale.",
+      "ogImage": "art/moderation-audit.svg"
+    }
+  },
+  "authorProfiles": {
+    "HB Staff": {
+      "role": "Editorial Desk",
+      "description": "HB staff writing focused on procedure, recordkeeping, and the legal shape of technical decisions.",
+      "ogImage": "art/model-opacity.svg"
+    },
+    "HB Notes": {
+      "role": "Notes Desk",
+      "description": "Shorter HB essays and notebook-style arguments that stay close to access, extraction, and institutional edges.",
+      "ogImage": "art/scraping-consent.svg"
+    },
+    "HB Commentary": {
+      "role": "Commentary Desk",
+      "description": "HB commentary on professional formation, pedagogy, and the practical norms institutions are quietly teaching.",
+      "ogImage": "art/law-school-ai.svg"
+    },
+    "HB Staff Argument": {
+      "role": "Argument Desk",
+      "description": "HB staff arguments oriented toward governance, legitimacy, and the procedural infrastructure behind platform power.",
+      "ogImage": "art/moderation-audit.svg"
+    }
+  }
 }

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">When Model Opacity Becomes a Due Process Problem</title>
+  <desc id="desc">Editorial cover for a HB article on procedural harm and automated opacity.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#191d2a"/>
+      <stop offset="100%" stop-color="#0c0f17"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g stroke="rgba(241,231,215,0.14)" stroke-width="1">
+    <path d="M0 105H1200M0 210H1200M0 315H1200M0 420H1200M0 525H1200"/>
+    <path d="M150 0V630M300 0V630M450 0V630M600 0V630M750 0V630M900 0V630M1050 0V630"/>
+  </g>
+  <circle cx="950" cy="170" r="110" fill="rgba(239,143,104,0.18)"/>
+  <text x="74" y="108" fill="#ef8f68" font-family="'Space Grotesk', Arial, sans-serif" font-size="24" letter-spacing="6">HB / ISSUE 1 / ARTICLE</text>
+  <text x="74" y="250" fill="#f1e7d7" font-family="'Cormorant Garamond', Georgia, serif" font-size="78">When Model Opacity</text>
+  <text x="74" y="332" fill="#f1e7d7" font-family="'Cormorant Garamond', Georgia, serif" font-size="78">Becomes a Due</text>
+  <text x="74" y="414" fill="#f1e7d7" font-family="'Cormorant Garamond', Georgia, serif" font-size="78">Process Problem</text>
+  <text x="76" y="524" fill="rgba(241,231,215,0.72)" font-family="'Space Grotesk', Arial, sans-serif" font-size="30">Procedure, review, and the politics of legibility.</text>
+</svg>

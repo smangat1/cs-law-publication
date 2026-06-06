@@ -1,0 +1,5 @@
+Contact: https://github.com/smangat1/cs-law-publication/issues
+Expires: 2027-06-06T00:00:00.000Z
+Preferred-Languages: en
+Policy: https://smangat1.github.io/cs-law-publication/about.html
+Canonical: https://smangat1.github.io/cs-law-publication/.well-known/security.txt

@@ -117,29 +117,43 @@ async function renderPiece() {
   if (piece.thumbnail) {
     cover.style.backgroundImage = `linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)), url("${piece.thumbnail}")`;
   } else {
-    cover.innerHTML = `
-      <span class="piece-cover-kicker">${window.HBContent.typeLabel(piece.type)}</span>
-      <strong>${piece.category}</strong>
-      <span class="piece-cover-tag">HB / ${window.HBContent.formatDate(piece.publishedAt)}</span>
-    `;
+    const kicker = document.createElement("span");
+    kicker.className = "piece-cover-kicker";
+    kicker.textContent = window.HBContent.typeLabel(piece.type);
+    const strong = document.createElement("strong");
+    strong.textContent = piece.category;
+    const tag = document.createElement("span");
+    tag.className = "piece-cover-tag";
+    tag.textContent = `HB / ${window.HBContent.formatDate(piece.publishedAt)}`;
+    cover.append(kicker, strong, tag);
   }
 
   const authorBlock = document.createElement("div");
   authorBlock.className = "article-header-meta";
 
   const byline = document.createElement("div");
-  byline.innerHTML = `<span class="meta-label">Byline</span>`;
+  const bylineLabel = document.createElement("span");
+  bylineLabel.className = "meta-label";
+  bylineLabel.textContent = "Byline";
   const bylineLink = document.createElement("a");
   bylineLink.href = window.HBContent.createAuthorHref(piece.author);
   bylineLink.className = "meta-link";
   bylineLink.textContent = piece.author;
-  byline.appendChild(bylineLink);
+  byline.append(bylineLabel, bylineLink);
 
   const published = document.createElement("div");
-  published.innerHTML = `<span class="meta-label">Published</span><p>${window.HBContent.formatDate(piece.publishedAt)}</p>`;
+  const publishedLabel = document.createElement("span");
+  publishedLabel.className = "meta-label";
+  publishedLabel.textContent = "Published";
+  const publishedValue = document.createElement("p");
+  publishedValue.textContent = window.HBContent.formatDate(piece.publishedAt);
+  published.append(publishedLabel, publishedValue);
 
   const section = document.createElement("div");
-  section.innerHTML = `<span class="meta-label">Section</span>`;
+  const sectionLabel = document.createElement("span");
+  sectionLabel.className = "meta-label";
+  sectionLabel.textContent = "Section";
+  section.appendChild(sectionLabel);
   if (piece.issueId) {
     if (issue) {
       const issueLink = document.createElement("a");
@@ -158,11 +172,11 @@ async function renderPiece() {
 
   const meta = document.createElement("div");
   meta.className = "meta-row article-meta-row";
-  meta.innerHTML = `
-    <span>${window.HBContent.typeLabel(piece.type)}</span>
-    <span>${piece.category}</span>
-    <span>${piece.readTime}</span>
-  `;
+  [window.HBContent.typeLabel(piece.type), piece.category, piece.readTime].forEach((value) => {
+    const span = document.createElement("span");
+    span.textContent = value;
+    meta.appendChild(span);
+  });
 
   hero.append(eyebrow, title, dek, cover, authorBlock, meta);
 

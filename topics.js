@@ -18,7 +18,8 @@ window.HBContent.ready().then(async () => {
     return;
   }
 
-  topicsGrid.replaceChildren(...topics.map((topic) => {
+  topicsGrid.replaceChildren(...await Promise.all(topics.map(async (topic) => {
+    const profile = await window.HBContent.getTopicProfile(topic.name);
     const card = document.createElement("a");
     card.className = "piece-card";
     card.href = window.HBContent.createTopicHref(topic.name);
@@ -31,10 +32,10 @@ window.HBContent.ready().then(async () => {
     title.textContent = topic.name;
 
     const dek = document.createElement("p");
-    dek.textContent = "Browse the pieces gathered under this recurring editorial theme.";
+    dek.textContent = profile?.description || "Browse the pieces gathered under this recurring editorial theme.";
 
     card.append(label, title, dek);
     return card;
-  }));
+  })));
   window.HBContent.trackEvent("page_view", { surface: "topics" });
 });

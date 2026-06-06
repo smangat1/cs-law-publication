@@ -288,6 +288,15 @@ h3 {
   background-size: cover;
 }
 
+.issue-card-cover {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 1rem;
+  background-position: center;
+  background-size: cover;
+}
+
 .piece-thumb-large {
   margin: 1.2rem 0;
 }
@@ -688,6 +697,10 @@ h3 {
 .issue-field {
   display: grid;
   gap: 1rem;
+}
+
+.issue-subheading {
+  font-size: clamp(1.9rem, 3.8vw, 2.9rem);
 }
 
 .issue-piece-card {

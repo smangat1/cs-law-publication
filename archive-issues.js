@@ -20,7 +20,17 @@ function renderIssueCard(issue) {
 
   const meta = document.createElement("div");
   meta.className = "entry-meta";
-  meta.innerHTML = `<span>${window.HBContent.formatDate(issue.publishedAt)}</span>`;
+  const published = document.createElement("span");
+  published.textContent = window.HBContent.formatDate(issue.publishedAt);
+  meta.appendChild(published);
+
+  if (issue.coverImage) {
+    const cover = document.createElement("div");
+    cover.className = "issue-card-cover";
+    cover.style.backgroundImage = `linear-gradient(135deg, rgba(239, 143, 104, 0.12), rgba(8, 12, 18, 0.08)), url("${issue.coverImage}")`;
+    card.append(label, cover, title, dek, meta);
+    return card;
+  }
 
   card.append(label, title, dek, meta);
   return card;

@@ -91,6 +91,25 @@ function hbCountWords(blocks) {
     .length;
 }
 
+function hbExcerptFromBlocks(blocks, limit = 180) {
+  const text = blocks
+    .map((block) => String(block.text || "").trim())
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!text) {
+    return "";
+  }
+
+  if (text.length <= limit) {
+    return text;
+  }
+
+  return `${text.slice(0, limit).replace(/\s+\S*$/, "")}...`;
+}
+
 function hbEstimateReadTime(blocks) {
   const wordCount = hbCountWords(blocks);
 
@@ -106,6 +125,9 @@ function hbEstimateReadTime(blocks) {
 function hbNormalizePiece(piece) {
   const blocks = hbNormalizeBlocks(piece.blocks, piece.body);
   const publishedAt = piece.publishedAt || new Date().toISOString().slice(0, 10);
+  const excerpt = hbExcerptFromBlocks(blocks);
+  const dek = String(piece.dek || "").trim() || excerpt;
+  const summary = String(piece.summary || "").trim() || dek || excerpt || "Read this HB piece.";
 
   return {
     ...piece,
@@ -118,8 +140,8 @@ function hbNormalizePiece(piece) {
     publishedAt,
     category: String(piece.category || "Category").trim(),
     readTime: hbEstimateReadTime(blocks),
-    dek: String(piece.dek || "").trim(),
-    summary: String(piece.summary || piece.dek || "").trim(),
+    dek,
+    summary,
     issueId: piece.issueId || "",
     featured: Boolean(piece.featured),
     thumbnail: hbResolveAssetUrl(piece.thumbnail || ""),
@@ -179,6 +201,25 @@ function hbNormalizeSite(site) {
   };
 }
 
+function hbNormalizeProfiles(collection) {
+  if (!collection || typeof collection !== "object") {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(collection).map(([name, value]) => [
+      name,
+      {
+        name,
+        role: String(value?.role || "").trim(),
+        description: String(value?.description || "").trim(),
+        ogImage: hbResolveAssetUrl(value?.ogImage || ""),
+        ogImagePublicUrl: hbResolvePublicAssetUrl(value?.ogImage || "")
+      }
+    ])
+  );
+}
+
 async function hbLoadContent() {
   if (!hbContentPromise) {
     hbContentPromise = fetch(HB_CONTENT_SOURCE_URL)
@@ -190,10 +231,19 @@ async function hbLoadContent() {
         return response.json();
       })
       .then((data) => {
+        const issues = Array.isArray(data.issues) ? data.issues.map(hbNormalizeIssue) : [];
+        const issueLookup = new Map(issues.map((issue) => [issue.id, issue]));
+        const pieces = Array.isArray(data.pieces) ? data.pieces.map(hbNormalizePiece).map((piece) => ({
+          ...piece,
+          issueLabel: issueLookup.get(piece.issueId)?.label || ""
+        })) : [];
+
         const content = {
           site: hbNormalizeSite(data.site),
-          issues: Array.isArray(data.issues) ? data.issues.map(hbNormalizeIssue) : [],
-          pieces: Array.isArray(data.pieces) ? data.pieces.map(hbNormalizePiece) : []
+          issues,
+          pieces,
+          topicProfiles: hbNormalizeProfiles(data.topicProfiles),
+          authorProfiles: hbNormalizeProfiles(data.authorProfiles)
         };
         hbContentCache = content;
         return content;
@@ -202,7 +252,9 @@ async function hbLoadContent() {
         const fallback = {
           site: hbNormalizeSite(),
           issues: [],
-          pieces: []
+          pieces: [],
+          topicProfiles: {},
+          authorProfiles: {}
         };
         hbContentCache = fallback;
         return fallback;
@@ -368,6 +420,16 @@ async function hbGetPiecesByAuthor(author, options = {}) {
   return (await hbGetAllPieces(options)).filter((piece) => piece.author === author);
 }
 
+async function hbGetTopicProfile(topic) {
+  const content = await hbLoadContent();
+  return content.topicProfiles?.[topic] || null;
+}
+
+async function hbGetAuthorProfile(author) {
+  const content = await hbLoadContent();
+  return content.authorProfiles?.[author] || null;
+}
+
 function hbUpsertMetaTag(selector, attributes) {
   let node = document.head.querySelector(selector);
 
@@ -476,13 +538,25 @@ function hbTrackEvent(name, detail = {}) {
   };
 
   if (endpoint) {
-    const body = JSON.stringify(payload);
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(endpoint, body);
+    let endpointUrl;
+    try {
+      endpointUrl = new URL(endpoint, window.location.href);
+    } catch (error) {
       return;
     }
 
-    fetch(endpoint, {
+    const allowBeacon = endpointUrl.origin === window.location.origin || endpointUrl.protocol === "https:";
+    if (!allowBeacon) {
+      return;
+    }
+
+    const body = JSON.stringify(payload);
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(endpointUrl.href, body);
+      return;
+    }
+
+    fetch(endpointUrl.href, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body,
@@ -505,6 +579,7 @@ window.HBContent = {
   estimateReadTime: hbEstimateReadTime,
   formatDate: hbFormatDate,
   getAllPieces: hbGetAllPieces,
+  getAuthorProfile: hbGetAuthorProfile,
   getAuthors: hbGetAuthors,
   getById: hbGetPieceById,
   getIssueById: hbGetIssueById,
@@ -514,6 +589,7 @@ window.HBContent = {
   getPiecesByCategory: hbGetPiecesByCategory,
   getRelatedPieces: hbGetRelatedPieces,
   getSite: () => hbContentCache?.site || HB_DEFAULT_SITE,
+  getTopicProfile: hbGetTopicProfile,
   getTopics: hbGetTopics,
   ready: hbLoadContent,
   resolveAssetUrl: hbResolveAssetUrl,
