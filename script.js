@@ -7,7 +7,7 @@ const setMastheadState = () => {
     return;
   }
 
-  const triggerPoint = hero.offsetHeight * 0.45;
+  const triggerPoint = hero.offsetHeight * 0.28;
   body.classList.toggle("scrolled", window.scrollY > triggerPoint);
 };
 
@@ -23,8 +23,8 @@ const revealObserver = new IntersectionObserver(
     });
   },
   {
-    threshold: 0.16,
-    rootMargin: "0px 0px -10% 0px",
+    threshold: 0.12,
+    rootMargin: "0px 0px -8% 0px",
   }
 );
 
