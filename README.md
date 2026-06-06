@@ -16,7 +16,7 @@ All content lives in [content/site-content.json](/Users/samyanmangat/Documents/L
 - Pieces render through [piece.html](/Users/samyanmangat/Documents/LawPub/piece.html) with `?id=...`
 - Topics render through [topic.html](/Users/samyanmangat/Documents/LawPub/topic.html) with `?name=...`
 - Authors render through [author.html](/Users/samyanmangat/Documents/LawPub/author.html) with `?name=...`
-- Issues render through the path defined on each issue object, currently [issues/issue-001.html](/Users/samyanmangat/Documents/LawPub/issues/issue-001.html)
+- Issues render through the path defined on each issue object, currently [issues/issue-1.html](/Users/samyanmangat/Documents/LawPub/issues/issue-1.html)
 
 ## Generated public artifacts
 
