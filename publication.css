@@ -181,6 +181,22 @@ h3 {
     border-color 180ms ease;
 }
 
+.piece-thumb {
+  width: 100%;
+  aspect-ratio: 1200 / 630;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(125, 31, 31, 0.18), rgba(22, 22, 22, 0.03)),
+    linear-gradient(180deg, rgba(255, 255, 252, 0.9), rgba(244, 240, 232, 0.72));
+  background-position: center;
+  background-size: cover;
+}
+
+.piece-thumb-large {
+  margin: 1.2rem 0;
+}
+
 .archive-panel:hover,
 .issue-card:hover,
 .piece-card:hover,
@@ -217,10 +233,84 @@ h3 {
   border-color: var(--line-strong);
 }
 
+.editor-shell {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(0, 1.05fr);
+  gap: 1.2rem;
+  margin-top: 1.3rem;
+}
+
+.editor-form,
+.editor-preview {
+  display: grid;
+  gap: 1rem;
+}
+
+.editor-form {
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: 1.6rem;
+  background: var(--paper);
+}
+
+.editor-form label {
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+}
+
+.editor-form input,
+.editor-form select,
+.editor-form textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 252, 0.8);
+  font: inherit;
+}
+
+.editor-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.form-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.studio-button {
+  width: fit-content;
+  padding: 0.85rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.preview-block {
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: 1.6rem;
+  background: var(--paper);
+}
+
+.preview-card,
+.preview-article {
+  margin-top: 0.75rem;
+}
+
 @media (max-width: 900px) {
   .archive-grid,
   .issue-grid,
-  .piece-grid {
+  .piece-grid,
+  .editor-shell,
+  .editor-row {
     grid-template-columns: 1fr;
   }
 }

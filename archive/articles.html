@@ -23,6 +23,7 @@
         <a href="../index.html">Home</a>
         <a href="../archive.html" aria-current="page">Archive</a>
         <a href="../about.html">About</a>
+        <a href="../editor.html">Studio</a>
       </nav>
     </header>
 
@@ -34,18 +35,10 @@
       </p>
     </section>
 
-    <section class="piece-grid">
-      <a class="piece-card" href="../articles/model-opacity.html">
-        <span class="panel-label">8 min read</span>
-        <h3>When Model Opacity Becomes a Due Process Problem</h3>
-        <p>On automated judgment, procedural harm, and legibility as a condition of review.</p>
-      </a>
-      <a class="piece-card" href="../articles/law-school-ai.html">
-        <span class="panel-label">7 min read</span>
-        <h3>Law School AI Policies Are Becoming Shadow Curricula</h3>
-        <p>On institutional rules that teach more about legal practice than they admit.</p>
-      </a>
-    </section>
+    <section id="article-grid" class="piece-grid"></section>
   </main>
+  <script src="../pieces.js"></script>
+  <script src="../archive-list.js"></script>
+  <script>window.HBArchive.renderArchiveList("article-grid", "article");</script>
 </body>
 </html>

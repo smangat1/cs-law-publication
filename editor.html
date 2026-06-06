@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio | HB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="publication.css">
+</head>
+<body>
+  <main class="site-page">
+    <header class="site-topbar">
+      <a class="site-brand" href="index.html" aria-label="HB home">
+        <span class="site-brand-title">HB.</span>
+        <span class="site-brand-tagline">a loosely bound tech law publication</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="archive.html">Archive</a>
+        <a href="about.html">About</a>
+        <a href="editor.html" aria-current="page">Studio</a>
+      </nav>
+    </header>
+
+    <section class="page-hero">
+      <p class="eyebrow">Studio</p>
+      <h1>Add a new article or essay with a live preview and a 1200 x 630 thumbnail.</h1>
+      <p class="lede">
+        This editor is local to your browser and works on GitHub Pages without a backend.
+        Added pieces appear in homepage previews, archive views, and the article page.
+      </p>
+    </section>
+
+    <section class="editor-shell">
+      <form id="piece-form" class="editor-form">
+        <label>
+          Title
+          <input id="piece-title" name="title" required>
+        </label>
+
+        <div class="editor-row">
+          <label>
+            Type
+            <select id="piece-type" name="type">
+              <option value="article">Article</option>
+              <option value="essay">Essay</option>
+            </select>
+          </label>
+
+          <label>
+            Category
+            <input id="piece-category" name="category" required>
+          </label>
+
+          <label>
+            Read time
+            <input id="piece-read-time" name="readTime" placeholder="8 min read" required>
+          </label>
+        </div>
+
+        <label>
+          Dek
+          <textarea id="piece-dek" name="dek" rows="3" required></textarea>
+        </label>
+
+        <label>
+          Body
+          <textarea id="piece-body" name="body" rows="10" placeholder="Write paragraphs separated by blank lines." required></textarea>
+        </label>
+
+        <div class="editor-row">
+          <label>
+            Issue
+            <input id="piece-issue" name="issue" placeholder="Issue 001">
+          </label>
+
+          <label>
+            Thumbnail (1200 x 630)
+            <input id="piece-thumbnail" name="thumbnail" type="file" accept="image/*">
+          </label>
+        </div>
+
+        <p id="thumbnail-note" class="form-note">Recommended cover size: 1200 x 630. Other sizes will still preview, but may crop.</p>
+        <button class="studio-button" type="submit">Save piece</button>
+      </form>
+
+      <div class="editor-preview">
+        <div class="preview-block">
+          <p class="eyebrow">Outside Preview</p>
+          <div class="featured-lead preview-card" id="preview-card"></div>
+        </div>
+
+        <div class="preview-block">
+          <p class="eyebrow">Inside Preview</p>
+          <article class="page-hero preview-article" id="preview-article"></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <h2>Saved custom pieces</h2>
+      <div id="saved-pieces" class="piece-grid"></div>
+    </section>
+  </main>
+
+  <script src="pieces.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

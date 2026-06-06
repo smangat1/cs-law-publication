@@ -58,11 +58,16 @@ a {
 
 .dot-nav {
   position: fixed;
-  top: 1.25rem;
+  top: 4.7rem;
   left: 1.25rem;
   z-index: 40;
-  display: grid;
+  display: flex;
   gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(244, 240, 232, 0.66);
+  backdrop-filter: blur(14px);
 }
 
 .dot-link {
@@ -95,7 +100,7 @@ a {
   align-items: start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem 1.2rem 1rem 3rem;
+  padding: 1rem 1.5rem 1rem 1.5rem;
   border-bottom: 1px solid transparent;
   background: rgba(244, 240, 232, 0.78);
   backdrop-filter: blur(0px);
@@ -168,13 +173,13 @@ body.scrolled .masthead {
   scroll-snap-stop: always;
   display: grid;
   align-items: center;
-  padding: 2rem 0;
+  padding: 2rem 0 1.2rem;
 }
 
 .page-inner {
-  width: min(1120px, calc(100vw - 3rem));
+  width: min(1360px, calc(100vw - 3.5rem));
   margin: 0 auto;
-  padding: 4.8rem 0 2rem;
+  padding: 7rem 0 2.2rem;
 }
 
 .page-inner-hero {
@@ -247,9 +252,9 @@ body.scrolled .masthead {
 
 .featured-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
-  gap: 1rem;
-  margin-top: 1.2rem;
+  grid-template-columns: minmax(0, 1.3fr) minmax(400px, 0.9fr);
+  gap: 1.25rem;
+  margin-top: 1.45rem;
 }
 
 .featured-lead,
@@ -282,11 +287,29 @@ body.scrolled .masthead {
 }
 
 .featured-lead {
-  display: grid;
-  align-content: end;
-  min-height: 390px;
-  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 540px;
+  padding: 1.65rem;
   border-radius: 1.75rem;
+}
+
+.featured-media {
+  width: 100%;
+  aspect-ratio: 1200 / 630;
+  border-radius: 1.1rem;
+  background:
+    linear-gradient(135deg, rgba(125, 31, 31, 0.18), rgba(22, 22, 22, 0.03)),
+    linear-gradient(180deg, rgba(255, 255, 252, 0.9), rgba(244, 240, 232, 0.72));
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+}
+
+.featured-body {
+  display: grid;
+  gap: 0.8rem;
 }
 
 .featured-lead h3,
@@ -312,13 +335,13 @@ body.scrolled .masthead {
 
 .featured-stack {
   display: grid;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 .featured-item {
   display: grid;
   gap: 0.75rem;
-  min-height: 120px;
+  min-height: 160px;
   padding: 1.2rem 1.25rem;
   border-radius: 1.3rem;
 }
@@ -346,8 +369,8 @@ body.scrolled .masthead {
 .bucket-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 1.2rem;
+  gap: 1.25rem;
+  margin-top: 1.45rem;
 }
 
 .bucket-card {
@@ -393,6 +416,13 @@ body.scrolled .masthead {
   font-size: 0.95rem;
 }
 
+.thumbnail-pill {
+  color: var(--muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 @media (max-width: 900px) {
   .section-header,
   .featured-grid,
@@ -408,13 +438,13 @@ body.scrolled .masthead {
 
 @media (max-width: 720px) {
   .dot-nav {
+    top: 5.5rem;
     left: 0.9rem;
   }
 
   .masthead {
     flex-direction: column;
     align-items: start;
-    padding-left: 2.5rem;
     padding-right: 1rem;
   }
 
@@ -425,7 +455,7 @@ body.scrolled .masthead {
 
   .page-inner {
     width: min(100vw - 1.2rem, 100%);
-    padding-top: 6.6rem;
+    padding-top: 8rem;
     padding-bottom: 1.5rem;
   }
 
