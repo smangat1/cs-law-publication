@@ -3,6 +3,8 @@ const titleInput = document.getElementById("piece-title");
 const typeInput = document.getElementById("piece-type");
 const categoryInput = document.getElementById("piece-category");
 const readTimeInput = document.getElementById("piece-read-time");
+const authorInput = document.getElementById("piece-author");
+const publishedAtInput = document.getElementById("piece-published-at");
 const dekInput = document.getElementById("piece-dek");
 const bodyInput = document.getElementById("piece-body");
 const issueInput = document.getElementById("piece-issue");
@@ -28,6 +30,8 @@ function getDraftPiece() {
     id: `custom-${slugify(titleInput.value || "piece")}-${Date.now()}`,
     title: titleInput.value || "Untitled piece",
     type: typeInput.value,
+    author: authorInput.value || "HB Desk",
+    publishedAt: publishedAtInput.value || new Date().toISOString().slice(0, 10),
     category: categoryInput.value || "Category",
     readTime: readTimeInput.value || "8 min read",
     dek: dekInput.value || "Dek preview.",
@@ -76,6 +80,14 @@ function renderInsidePreview(piece) {
   dek.className = "lede";
   dek.textContent = piece.dek;
 
+  const meta = document.createElement("div");
+  meta.className = "meta-row";
+  meta.innerHTML = `
+    <span>${piece.author}</span>
+    <span>${window.HBContent.formatDate(piece.publishedAt)}</span>
+    <span>${piece.readTime}</span>
+  `;
+
   previewArticle.append(eyebrow);
 
   if (piece.thumbnail) {
@@ -85,7 +97,7 @@ function renderInsidePreview(piece) {
     previewArticle.append(image);
   }
 
-  previewArticle.append(title, dek);
+  previewArticle.append(title, dek, meta);
 }
 
 function renderSavedPieces() {
@@ -148,7 +160,7 @@ thumbnailInput.addEventListener("change", async () => {
   updatePreview();
 });
 
-[titleInput, typeInput, categoryInput, readTimeInput, dekInput, bodyInput, issueInput].forEach((input) => {
+[titleInput, typeInput, categoryInput, readTimeInput, authorInput, publishedAtInput, dekInput, bodyInput, issueInput].forEach((input) => {
   input.addEventListener("input", updatePreview);
 });
 
@@ -165,6 +177,7 @@ form.addEventListener("submit", (event) => {
   window.HBContent.saveCustomPieces(pieces);
   form.reset();
   thumbnailData = "";
+  publishedAtInput.value = "";
   thumbnailNote.textContent = "Saved. Recommended cover size: 1200 x 630.";
   renderSavedPieces();
   updatePreview();
