@@ -21,6 +21,10 @@ body {
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
 }
 
+body.studio-body {
+  background: #eef2ff;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -316,47 +320,279 @@ h3 {
   border-color: var(--line-strong);
 }
 
-.editor-shell {
-  display: grid;
-  grid-template-columns: minmax(360px, 0.95fr) minmax(0, 1.05fr);
-  gap: 1.2rem;
-  margin-top: 1.3rem;
+.studio-app {
+  min-height: 100vh;
 }
 
-.editor-form,
-.editor-preview {
+.studio-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.4rem;
+  background: rgba(238, 242, 255, 0.9);
+  border-bottom: 1px solid rgba(22, 22, 22, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.studio-appbar-left,
+.studio-appbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.studio-back {
+  color: var(--ink);
+  text-decoration: none;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+}
+
+.studio-status-pill {
+  padding: 0.38rem 0.7rem;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  color: #55606f;
+  font-size: 0.88rem;
+}
+
+.studio-status-pill[data-status="published"] {
+  color: #115e3b;
+}
+
+.studio-appbar-button {
+  border: 0;
+  border-radius: 0.85rem;
+  background: #3467eb;
+  color: white;
+  padding: 0.9rem 1.1rem;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.studio-appbar-button-muted {
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--ink);
+}
+
+.studio-appbar-button-danger {
+  background: rgba(125, 31, 31, 0.12);
+  color: var(--accent);
+}
+
+.studio-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.9rem 1.4rem;
+  border-bottom: 1px solid rgba(22, 22, 22, 0.08);
+  background: rgba(238, 242, 255, 0.82);
+}
+
+.studio-tool {
+  min-width: 48px;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: #3a4257;
+  font: inherit;
+  cursor: pointer;
+}
+
+.studio-layout {
+  display: grid;
+  gap: 1.6rem;
+  padding: 1.5rem;
+}
+
+.studio-editor-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1.6rem;
+  align-items: start;
+}
+
+.studio-editor-canvas {
+  width: min(860px, 100%);
+  margin: 0 auto;
+  padding: 2rem 0 0.5rem;
+}
+
+.studio-cover-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.studio-cover-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #445069;
+  padding: 0.7rem 1rem;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.studio-inline-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.studio-cover-preview {
+  width: 100%;
+  aspect-ratio: 1200 / 630;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 1.3rem;
+  background-position: center;
+  background-size: cover;
+}
+
+.studio-title-input,
+.studio-dek-input,
+.studio-body-input,
+.studio-chip-input,
+.studio-inspector input,
+.studio-inspector select {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+
+.studio-title-input:focus,
+.studio-dek-input:focus,
+.studio-body-input:focus,
+.studio-chip-input:focus,
+.studio-inspector input:focus,
+.studio-inspector select:focus {
+  outline: none;
+}
+
+.studio-title-input {
+  margin: 0;
+  padding: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.studio-title-input::placeholder {
+  color: rgba(22, 22, 22, 0.4);
+}
+
+.studio-dek-input {
+  min-height: 80px;
+  margin-top: 0.5rem;
+  padding: 0;
+  resize: vertical;
+  font-size: 1.45rem;
+  line-height: 1.45;
+  color: #697386;
+}
+
+.studio-dek-input::placeholder,
+.studio-body-input::placeholder {
+  color: rgba(90, 96, 112, 0.58);
+}
+
+.studio-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0 1.3rem;
+}
+
+.studio-chip-input {
+  width: auto;
+  min-width: 120px;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #4a5367;
+  font-size: 0.92rem;
+}
+
+.studio-body-input {
+  min-height: 58vh;
+  padding: 0;
+  resize: vertical;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+  line-height: 1.5;
+}
+
+.studio-inspector {
+  position: sticky;
+  top: 7.25rem;
   display: grid;
   gap: 1rem;
 }
 
-.editor-form {
-  padding: 1.4rem;
-  border: 1px solid var(--line);
-  border-radius: 1.6rem;
-  background: var(--paper);
-}
-
-.editor-form label {
+.studio-inspector-card {
   display: grid;
-  gap: 0.45rem;
-  font-size: 0.92rem;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.72);
 }
 
-.editor-form input,
-.editor-form select,
-.editor-form textarea {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--line);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 252, 0.8);
-  font: inherit;
-}
-
-.editor-row {
+.studio-inspector-card label {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
+  gap: 0.42rem;
+  font-size: 0.9rem;
+}
+
+.studio-inspector-card input,
+.studio-inspector-card select {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.studio-inspector-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.studio-preview-card .preview-card,
+.studio-preview-card .preview-article {
+  margin-top: 0;
+}
+
+.studio-library {
+  display: grid;
+  gap: 1rem;
+  width: min(1260px, 100%);
+  margin: 0 auto;
+}
+
+.studio-library-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .form-note {
@@ -365,7 +601,6 @@ h3 {
   font-size: 0.85rem;
 }
 
-.studio-toolbar,
 .studio-actions,
 .studio-piece-actions {
   display: flex;
@@ -462,12 +697,17 @@ h3 {
 }
 
 .studio-piece-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
   color: var(--ink);
+  text-align: left;
   text-decoration: none;
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(2rem, 3.2vw, 2.8rem);
   line-height: 0.96;
   letter-spacing: -0.04em;
+  cursor: pointer;
 }
 
 .studio-piece-link:hover,
@@ -650,9 +890,21 @@ h3 {
   .issue-grid,
   .piece-grid,
   .issue-piece-grid,
-  .editor-shell,
-  .editor-row {
+  .studio-editor-shell,
+  .studio-library-head {
     grid-template-columns: 1fr;
+  }
+
+  .studio-library-head {
+    display: grid;
+  }
+
+  .studio-editor-shell {
+    gap: 1rem;
+  }
+
+  .studio-inspector {
+    position: static;
   }
 }
 
@@ -672,5 +924,34 @@ h3 {
 
   #piece-view .page-copy:first-child::first-letter {
     font-size: 3.6rem;
+  }
+
+  .studio-appbar,
+  .studio-toolbar,
+  .studio-layout {
+    padding-inline: 0.9rem;
+  }
+
+  .studio-appbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .studio-appbar-left,
+  .studio-appbar-right {
+    justify-content: space-between;
+  }
+
+  .studio-title-input {
+    font-size: clamp(2.5rem, 10vw, 3.6rem);
+  }
+
+  .studio-body-input {
+    font-size: 1.55rem;
+  }
+
+  .studio-meta-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 }

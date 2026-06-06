@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studio | HB</title>
-  <meta name="description" content="Create and preview draft HB articles and essays with local browser-based authoring tools.">
-  <meta name="theme-color" content="#f4efe6">
+  <meta name="description" content="Draft and manage HB articles and essays in a writing-first local Studio.">
+  <meta name="theme-color" content="#eef2ff">
   <meta property="og:title" content="Studio | HB">
-  <meta property="og:description" content="Create and preview draft HB articles and essays with local browser-based authoring tools.">
+  <meta property="og:description" content="Draft and manage HB articles and essays in a writing-first local Studio.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://smangat1.github.io/cs-law-publication/editor.html">
   <meta property="og:site_name" content="HB">
@@ -23,134 +23,108 @@
   >
   <link rel="stylesheet" href="publication.css">
 </head>
-<body>
-  <main class="site-page">
-    <header class="site-topbar">
-      <a class="site-brand" href="index.html" aria-label="HB home">
-        <span class="site-brand-title">HB.</span>
-        <span class="site-brand-tagline">a loosely bound tech law publication</span>
-      </a>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="index.html">Home</a>
-        <a href="archive.html">Archive</a>
-        <a href="about.html">About</a>
-        <a href="editor.html" aria-current="page">Studio</a>
-      </nav>
+<body class="studio-body">
+  <main class="studio-app">
+    <header class="studio-appbar">
+      <div class="studio-appbar-left">
+        <a class="studio-back" href="index.html" aria-label="Return to site">HB.</a>
+        <span id="editor-status-pill" class="studio-status-pill">Draft</span>
+      </div>
+
+      <div class="studio-appbar-right">
+        <button id="toggle-preview-button" class="studio-appbar-button studio-appbar-button-muted" type="button">Preview</button>
+        <button id="new-piece-button" class="studio-appbar-button studio-appbar-button-muted" type="button">New</button>
+        <button id="export-content-button" class="studio-appbar-button" type="button">Export JSON</button>
+      </div>
     </header>
 
-    <section class="page-hero">
-      <p class="eyebrow">Studio</p>
-      <h1>Manage drafts and published pieces from one structured editorial source.</h1>
-      <p class="lede">
-        Studio now works like a small local publishing desk. You can draft, publish,
-        edit, unpublish, delete, and export entries into a repo-ready JSON snapshot.
-      </p>
-      <div class="studio-toolbar">
-        <button id="new-piece-button" class="studio-button studio-button-secondary" type="button">New piece</button>
-        <button id="export-content-button" class="studio-button" type="button">Export content JSON</button>
-      </div>
+    <section class="studio-toolbar">
+      <button class="studio-tool" type="button" data-insert="**bold**">B</button>
+      <button class="studio-tool" type="button" data-insert="_italic_">I</button>
+      <button class="studio-tool" type="button" data-insert="\n\n## Section heading\n\n">H2</button>
+      <button class="studio-tool" type="button" data-insert="\n\n> Pull quote\n\n">Quote</button>
+      <button class="studio-tool" type="button" data-insert="\n\n- Point one\n- Point two\n\n">List</button>
+      <button class="studio-tool" type="button" data-insert="\n\n---\n\n">Rule</button>
     </section>
 
-    <section class="editor-shell">
-      <form id="piece-form" class="editor-form">
+    <div class="studio-layout">
+      <form id="piece-form" class="studio-editor-shell">
         <input id="piece-id" name="id" type="hidden">
 
-        <label>
-          Title
-          <input id="piece-title" name="title" required>
-        </label>
+        <div class="studio-editor-canvas">
+          <div class="studio-cover-row">
+            <label class="studio-cover-button" for="piece-thumbnail">Add cover image</label>
+            <input id="piece-thumbnail" name="thumbnail" type="file" accept="image/*" hidden>
+            <p id="thumbnail-note" class="studio-inline-note">Recommended: 1200 x 630.</p>
+          </div>
 
-        <div class="editor-row">
-          <label>
-            Type
-            <select id="piece-type" name="type">
+          <div id="studio-cover-preview" class="studio-cover-preview" hidden></div>
+
+          <input id="piece-title" class="studio-title-input" name="title" type="text" placeholder="Title" required>
+          <textarea id="piece-dek" class="studio-dek-input" name="dek" rows="2" placeholder="Add a subtitle..." required></textarea>
+
+          <div class="studio-meta-strip">
+            <input id="piece-category" class="studio-chip-input" name="category" type="text" placeholder="Topic" required>
+            <input id="piece-author" class="studio-chip-input" name="author" type="text" placeholder="Byline">
+            <select id="piece-type" class="studio-chip-input" name="type">
               <option value="article">Article</option>
               <option value="essay">Essay</option>
             </select>
-          </label>
+            <input id="piece-read-time" class="studio-chip-input" name="readTime" type="text" placeholder="8 min read" required>
+          </div>
 
-          <label>
-            Category
-            <input id="piece-category" name="category" required>
-          </label>
-
-          <label>
-            Read time
-            <input id="piece-read-time" name="readTime" placeholder="8 min read" required>
-          </label>
+          <textarea id="piece-body" class="studio-body-input" name="body" rows="18" placeholder="Start writing..." required></textarea>
         </div>
 
-        <div class="editor-row">
-          <label>
-            Byline
-            <input id="piece-author" name="author" placeholder="HB Desk">
-          </label>
+        <aside class="studio-inspector">
+          <div class="studio-inspector-card">
+            <p class="eyebrow">Publishing</p>
 
-          <label>
-            Publish date
-            <input id="piece-published-at" name="publishedAt" type="date">
-          </label>
+            <label>
+              Status
+              <select id="piece-status" name="status">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </label>
 
-          <label>
-            Status
-            <select id="piece-status" name="status">
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-            </select>
-          </label>
-        </div>
+            <label>
+              Publish date
+              <input id="piece-published-at" name="publishedAt" type="date">
+            </label>
 
-        <label>
-          Dek
-          <textarea id="piece-dek" name="dek" rows="3" required></textarea>
-        </label>
+            <label>
+              Issue
+              <input id="piece-issue" name="issue" type="text" placeholder="issue-001">
+            </label>
 
-        <label>
-          Body
-          <textarea id="piece-body" name="body" rows="10" placeholder="Write paragraphs separated by blank lines." required></textarea>
-        </label>
+            <p id="editor-status-note" class="form-note">Creating a new local piece.</p>
 
-        <div class="editor-row">
-          <label>
-            Issue
-            <input id="piece-issue" name="issue" placeholder="Issue 001">
-          </label>
+            <div class="studio-inspector-actions">
+              <button id="save-piece-button" class="studio-appbar-button" type="submit">Save draft</button>
+              <button id="delete-piece-button" class="studio-appbar-button studio-appbar-button-danger" type="button" hidden>Delete</button>
+            </div>
+          </div>
 
-          <label>
-            Thumbnail (1200 x 630)
-            <input id="piece-thumbnail" name="thumbnail" type="file" accept="image/*">
-          </label>
-        </div>
-
-        <p id="editor-status-note" class="form-note">Creating a new local piece.</p>
-        <p id="thumbnail-note" class="form-note">Recommended cover size: 1200 x 630. Other sizes will still preview, but may crop.</p>
-        <div class="studio-actions">
-          <button id="save-piece-button" class="studio-button" type="submit">Save piece</button>
-          <button id="delete-piece-button" class="studio-button studio-button-danger" type="button" hidden>Delete piece</button>
-        </div>
+          <div class="studio-inspector-card studio-preview-card" id="preview-panel" hidden>
+            <p class="eyebrow">Live preview</p>
+            <div class="featured-lead preview-card" id="preview-card"></div>
+            <article class="page-hero preview-article" id="preview-article"></article>
+          </div>
+        </aside>
       </form>
 
-      <div class="editor-preview">
-        <div class="preview-block">
-          <p class="eyebrow">Outside Preview</p>
-          <div class="featured-lead preview-card" id="preview-card"></div>
+      <section class="studio-library">
+        <div class="studio-library-head">
+          <div>
+            <p class="eyebrow">Studio Library</p>
+            <h2>Drafts and local pieces</h2>
+          </div>
+          <p class="page-copy">Publish to surface a piece publicly. Export when you want repo-ready content.</p>
         </div>
-
-        <div class="preview-block">
-          <p class="eyebrow">Inside Preview</p>
-          <article class="page-hero preview-article" id="preview-article"></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <h2>Studio pieces</h2>
-      <p class="page-copy">
-        Only published entries appear on the homepage and archive. Drafts stay local to Studio
-        until you publish them or export the content snapshot.
-      </p>
-      <div id="saved-pieces" class="studio-piece-list"></div>
-    </section>
+        <div id="saved-pieces" class="studio-piece-list"></div>
+      </section>
+    </div>
   </main>
 
   <script src="pieces.js"></script>

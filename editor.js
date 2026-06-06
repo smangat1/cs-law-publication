@@ -13,19 +13,35 @@ const issueInput = document.getElementById("piece-issue");
 const thumbnailInput = document.getElementById("piece-thumbnail");
 const thumbnailNote = document.getElementById("thumbnail-note");
 const editorStatusNote = document.getElementById("editor-status-note");
+const editorStatusPill = document.getElementById("editor-status-pill");
 const previewCard = document.getElementById("preview-card");
 const previewArticle = document.getElementById("preview-article");
+const previewPanel = document.getElementById("preview-panel");
+const coverPreview = document.getElementById("studio-cover-preview");
 const savedPieces = document.getElementById("saved-pieces");
 const savePieceButton = document.getElementById("save-piece-button");
 const deletePieceButton = document.getElementById("delete-piece-button");
 const newPieceButton = document.getElementById("new-piece-button");
 const exportContentButton = document.getElementById("export-content-button");
+const togglePreviewButton = document.getElementById("toggle-preview-button");
+const toolButtons = document.querySelectorAll(".studio-tool");
 
 let thumbnailData = "";
+let previewOpen = false;
 
 function bodyToText(blocks) {
   return (blocks || [])
-    .map((block) => block.text || "")
+    .map((block) => {
+      if (block.type === "heading") {
+        return `## ${block.text}`;
+      }
+
+      if (block.type === "quote") {
+        return `> ${block.text}`;
+      }
+
+      return block.text || "";
+    })
     .join("\n\n");
 }
 
@@ -34,21 +50,56 @@ function textToBlocks(value) {
     .split(/\n\s*\n/)
     .map((text) => text.trim())
     .filter(Boolean)
-    .map((text) => ({ type: "paragraph", text }));
+    .map((text) => {
+      if (text.startsWith("## ")) {
+        return { type: "heading", text: text.slice(3).trim() };
+      }
+
+      if (text.startsWith("> ")) {
+        return { type: "quote", text: text.slice(2).trim() };
+      }
+
+      return { type: "paragraph", text };
+    });
+}
+
+function setPreviewState(nextState) {
+  previewOpen = nextState;
+  previewPanel.hidden = !previewOpen;
+  togglePreviewButton.textContent = previewOpen ? "Hide preview" : "Preview";
+}
+
+function updateStatusUI(piece = null) {
+  const status = piece?.status || statusInput.value || "draft";
+  editorStatusPill.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  editorStatusPill.dataset.status = status;
 }
 
 function setEditorMode(piece = null) {
   if (!piece) {
     pieceIdInput.value = "";
     editorStatusNote.textContent = "Creating a new local piece.";
-    savePieceButton.textContent = "Save piece";
+    savePieceButton.textContent = "Save draft";
     deletePieceButton.hidden = true;
+    updateStatusUI({ status: statusInput.value });
     return;
   }
 
   editorStatusNote.textContent = `Editing local ${piece.status} piece: ${piece.title}`;
-  savePieceButton.textContent = "Update piece";
+  savePieceButton.textContent = piece.status === "published" ? "Update published piece" : "Save draft";
   deletePieceButton.hidden = false;
+  updateStatusUI(piece);
+}
+
+function renderCoverPreview() {
+  if (!thumbnailData) {
+    coverPreview.hidden = true;
+    coverPreview.style.backgroundImage = "";
+    return;
+  }
+
+  coverPreview.hidden = false;
+  coverPreview.style.backgroundImage = `url("${thumbnailData}")`;
 }
 
 function resetForm() {
@@ -57,7 +108,8 @@ function resetForm() {
   thumbnailData = "";
   statusInput.value = "draft";
   publishedAtInput.value = new Date().toISOString().slice(0, 10);
-  thumbnailNote.textContent = "Recommended cover size: 1200 x 630. Other sizes will still preview, but may crop.";
+  thumbnailNote.textContent = "Recommended: 1200 x 630.";
+  renderCoverPreview();
   setEditorMode();
   updatePreview();
 }
@@ -73,10 +125,10 @@ function getDraftPiece() {
     publishedAt: publishedAtInput.value || new Date().toISOString().slice(0, 10),
     category: categoryInput.value || "Category",
     readTime: readTimeInput.value || "8 min read",
-    dek: dekInput.value || "Dek preview.",
-    summary: dekInput.value || "Dek preview.",
+    dek: dekInput.value || "Add a subtitle...",
+    summary: dekInput.value || "Add a subtitle...",
     blocks: textToBlocks(bodyInput.value),
-    issueId: issueInput.value.trim().toLowerCase().replace(/\s+/g, "-") || "",
+    issueId: issueInput.value.trim() || "",
     thumbnail: thumbnailData,
     featured: false
   };
@@ -84,7 +136,6 @@ function getDraftPiece() {
 
 function renderOutsidePreview(piece) {
   previewCard.innerHTML = "";
-
   const body = document.createElement("div");
   body.className = "featured-body";
   body.innerHTML = `
@@ -132,7 +183,6 @@ function renderInsidePreview(piece) {
     <span>${piece.author}</span>
     <span>${window.HBContent.formatDate(piece.publishedAt)}</span>
     <span>${piece.readTime}</span>
-    <span>${piece.status}</span>
   `;
 
   previewArticle.append(eyebrow);
@@ -149,6 +199,7 @@ function renderInsidePreview(piece) {
 
 function updatePreview() {
   const piece = getDraftPiece();
+  updateStatusUI(piece);
   renderOutsidePreview(piece);
   renderInsidePreview(piece);
 }
@@ -166,9 +217,8 @@ function populateForm(piece) {
   bodyInput.value = bodyToText(piece.blocks);
   issueInput.value = piece.issueId || "";
   thumbnailData = piece.thumbnail || "";
-  thumbnailNote.textContent = piece.thumbnail
-    ? "Using the saved thumbnail for this piece."
-    : "Recommended cover size: 1200 x 630. Other sizes will still preview, but may crop.";
+  thumbnailNote.textContent = piece.thumbnail ? "Using the saved cover image." : "Recommended: 1200 x 630.";
+  renderCoverPreview();
   setEditorMode(piece);
   updatePreview();
 }
@@ -179,21 +229,24 @@ function buildStudioCard(piece) {
 
   const header = document.createElement("div");
   header.className = "studio-piece-head";
-
-  const meta = document.createElement("div");
-  meta.className = "entry-meta";
-  meta.innerHTML = `
-    <span>${window.HBContent.typeLabel(piece.type)}</span>
-    <span class="entry-rule" aria-hidden="true"></span>
-    <span>${piece.status}</span>
-    <span class="entry-rule" aria-hidden="true"></span>
-    <span>${window.HBContent.formatDate(piece.publishedAt)}</span>
+  header.innerHTML = `
+    <div class="entry-meta">
+      <span>${window.HBContent.typeLabel(piece.type)}</span>
+      <span class="entry-rule" aria-hidden="true"></span>
+      <span>${piece.status}</span>
+      <span class="entry-rule" aria-hidden="true"></span>
+      <span>${window.HBContent.formatDate(piece.publishedAt)}</span>
+    </div>
   `;
 
-  const title = document.createElement("a");
-  title.href = window.HBContent.createHref(piece);
+  const title = document.createElement("button");
+  title.type = "button";
   title.className = "studio-piece-link";
   title.textContent = piece.title;
+  title.addEventListener("click", () => {
+    populateForm(piece);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 
   const dek = document.createElement("p");
   dek.className = "page-copy";
@@ -226,25 +279,24 @@ function buildStudioCard(piece) {
   deleteButton.textContent = "Delete";
   deleteButton.addEventListener("click", () => {
     window.HBContent.deletePiece(piece.id);
-
     if (pieceIdInput.value === piece.id) {
       resetForm();
     }
-
     renderStudioPieces();
   });
 
-  header.append(meta, title);
+  header.append(title);
   actions.append(editButton, publishButton, deleteButton);
-  article.append(header, dek, actions);
+  article.append(header);
 
   if (piece.thumbnail) {
     const thumb = document.createElement("div");
     thumb.className = "piece-thumb";
     thumb.style.backgroundImage = `url("${piece.thumbnail}")`;
-    article.insertBefore(thumb, dek);
+    article.append(thumb);
   }
 
+  article.append(dek, actions);
   return article;
 }
 
@@ -256,8 +308,8 @@ function renderStudioPieces() {
     savedPieces.innerHTML = `
       <div class="studio-empty-state">
         <p class="eyebrow">No Local Pieces Yet</p>
-        <h3>Studio is ready for drafts.</h3>
-        <p class="page-copy">Create a piece above, then publish or export it when it is ready to become part of the repository content file.</p>
+        <h3>Studio is ready for a first draft.</h3>
+        <p class="page-copy">Start writing above, then publish or export when the piece is ready to become part of the repo content source.</p>
       </div>
     `;
     return;
@@ -266,12 +318,26 @@ function renderStudioPieces() {
   savedPieces.replaceChildren(...pieces.map(buildStudioCard));
 }
 
+function insertSnippet(snippet) {
+  const start = bodyInput.selectionStart;
+  const end = bodyInput.selectionEnd;
+  const before = bodyInput.value.slice(0, start);
+  const selection = bodyInput.value.slice(start, end);
+  const after = bodyInput.value.slice(end);
+  const content = selection ? snippet.replace("bold", selection).replace("italic", selection) : snippet;
+  bodyInput.value = `${before}${content}${after}`;
+  bodyInput.focus();
+  bodyInput.selectionStart = bodyInput.selectionEnd = before.length + content.length;
+  updatePreview();
+}
+
 thumbnailInput.addEventListener("change", async () => {
   const file = thumbnailInput.files && thumbnailInput.files[0];
 
   if (!file) {
     thumbnailData = "";
-    thumbnailNote.textContent = "Recommended cover size: 1200 x 630. Other sizes will still preview, but may crop.";
+    thumbnailNote.textContent = "Recommended: 1200 x 630.";
+    renderCoverPreview();
     updatePreview();
     return;
   }
@@ -289,12 +355,17 @@ thumbnailInput.addEventListener("change", async () => {
   });
 
   thumbnailData = dataUrl;
-  thumbnailNote.textContent = `Loaded ${image.width} x ${image.height}. Recommended cover size remains 1200 x 630.`;
+  thumbnailNote.textContent = `Loaded ${image.width} x ${image.height}. Recommended remains 1200 x 630.`;
+  renderCoverPreview();
   updatePreview();
 });
 
 [titleInput, typeInput, categoryInput, readTimeInput, authorInput, publishedAtInput, statusInput, dekInput, bodyInput, issueInput].forEach((input) => {
   input.addEventListener("input", updatePreview);
+});
+
+toolButtons.forEach((button) => {
+  button.addEventListener("click", () => insertSnippet(button.dataset.insert || ""));
 });
 
 form.addEventListener("submit", (event) => {
@@ -316,7 +387,12 @@ deletePieceButton.addEventListener("click", () => {
 
 newPieceButton.addEventListener("click", () => {
   resetForm();
+  titleInput.focus();
   window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+togglePreviewButton.addEventListener("click", () => {
+  setPreviewState(!previewOpen);
 });
 
 exportContentButton.addEventListener("click", async () => {
@@ -331,6 +407,7 @@ exportContentButton.addEventListener("click", async () => {
 });
 
 window.HBContent.ready().then(() => {
+  setPreviewState(false);
   resetForm();
   renderStudioPieces();
 });
