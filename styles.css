@@ -1,11 +1,11 @@
 :root {
   --bg: #f4f0e8;
   --bg-deep: #ece6dc;
-  --paper: rgba(255, 255, 252, 0.64);
+  --paper: rgba(255, 255, 252, 0.92);
   --ink: #161616;
   --muted: rgba(22, 22, 22, 0.63);
   --line: rgba(22, 22, 22, 0.12);
-  --line-strong: rgba(22, 22, 22, 0.24);
+  --line-strong: rgba(22, 22, 22, 0.3);
   --accent: #7d1f1f;
 }
 
@@ -52,30 +52,7 @@ body {
   min-height: 100vh;
   font-family: "Space Grotesk", sans-serif;
   color: var(--ink);
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(22, 22, 22, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(22, 22, 22, 0.03) 1px, transparent 1px);
-  background-size: 34px 34px;
-  opacity: 0.48;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.4));
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, transparent 7%, rgba(22, 22, 22, 0.02) 7.08%, transparent 7.16%),
-    linear-gradient(180deg, transparent 62%, rgba(125, 31, 31, 0.05) 62.08%, transparent 62.16%);
+  background: #f3eee5;
 }
 
 a {
@@ -104,11 +81,10 @@ select:focus-visible {
   align-items: center;
   gap: 0.6rem;
   width: max-content;
-  padding: 0.55rem 0.8rem;
+  padding: 0.45rem 0.7rem;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(244, 240, 232, 0.84);
-  backdrop-filter: blur(14px);
+  border-radius: 0;
+  background: rgba(243, 238, 229, 0.96);
 }
 
 .dot-link {
@@ -119,7 +95,7 @@ select:focus-visible {
   min-width: 1.75rem;
   min-height: 1.75rem;
   border: 1px solid rgba(22, 22, 22, 0.25);
-  border-radius: 999px;
+  border-radius: 0;
   background: transparent;
   transition:
     background-color 180ms ease,
@@ -152,22 +128,19 @@ select:focus-visible {
   gap: 1rem;
   padding: 1rem 1.5rem 1rem 1.5rem;
   border-bottom: 1px solid transparent;
-  background: rgba(244, 240, 232, 0.78);
-  backdrop-filter: blur(0px);
+  background: rgba(243, 238, 229, 0.96);
   opacity: 0;
   transform: translateY(-112%);
   transition:
     opacity 260ms ease,
     transform 260ms ease,
-    border-color 260ms ease,
-    backdrop-filter 260ms ease;
+    border-color 260ms ease;
 }
 
 body.scrolled .masthead {
   opacity: 1;
   transform: translateY(0);
   border-color: var(--line);
-  backdrop-filter: blur(16px);
 }
 
 .masthead-brand {
@@ -340,8 +313,8 @@ body.scrolled .masthead {
 .featured-item:focus-visible,
 .bucket-card:focus-visible {
   border-color: var(--line-strong);
-  transform: translateY(-4px);
-  background: rgba(255, 255, 252, 0.78);
+  transform: translateY(-2px);
+  background: #fffdfa;
 }
 
 .featured-lead {
@@ -350,7 +323,7 @@ body.scrolled .masthead {
   gap: 1rem;
   min-height: 540px;
   padding: 1.65rem;
-  border-radius: 1.75rem;
+  border-radius: 0;
 }
 
 .featured-lead.no-media {
@@ -362,10 +335,10 @@ body.scrolled .masthead {
 .featured-media {
   width: 100%;
   aspect-ratio: 1200 / 630;
-  border-radius: 1.1rem;
+  border-radius: 0;
   background:
-    linear-gradient(135deg, rgba(125, 31, 31, 0.18), rgba(22, 22, 22, 0.03)),
-    linear-gradient(180deg, rgba(255, 255, 252, 0.9), rgba(244, 240, 232, 0.72));
+    linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)),
+    linear-gradient(180deg, rgba(255, 255, 252, 0.96), rgba(244, 240, 232, 0.84));
   background-size: cover;
   background-position: center;
   border: 1px solid rgba(22, 22, 22, 0.08);
@@ -407,7 +380,7 @@ body.scrolled .masthead {
   gap: 0.75rem;
   min-height: 160px;
   padding: 1.2rem 1.25rem;
-  border-radius: 1.3rem;
+  border-radius: 0;
 }
 
 .featured-item h3 {
@@ -442,7 +415,8 @@ body.scrolled .masthead {
   align-content: space-between;
   min-height: 290px;
   padding: 1.45rem;
-  border-radius: 1.5rem;
+  border-radius: 0;
+  border-top: 2px solid var(--ink);
 }
 
 .bucket-label {
@@ -468,7 +442,7 @@ body.scrolled .masthead {
 .about-copy {
   display: grid;
   gap: 1.35rem;
-  width: min(760px, 100%);
+  width: min(860px, 100%);
 }
 
 .about-copy h2 {

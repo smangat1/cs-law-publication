@@ -1,11 +1,11 @@
 :root {
   --bg: #f4f0e8;
   --bg-deep: #ece6dc;
-  --paper: rgba(255, 255, 252, 0.72);
+  --paper: rgba(255, 255, 252, 0.94);
   --ink: #161616;
   --muted: rgba(22, 22, 22, 0.63);
   --line: rgba(22, 22, 22, 0.12);
-  --line-strong: rgba(22, 22, 22, 0.24);
+  --line-strong: rgba(22, 22, 22, 0.3);
   --accent: #7d1f1f;
 }
 
@@ -48,19 +48,7 @@ body {
   min-height: 100vh;
   font-family: "Space Grotesk", sans-serif;
   color: var(--ink);
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(22, 22, 22, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(22, 22, 22, 0.03) 1px, transparent 1px);
-  background-size: 34px 34px;
-  opacity: 0.48;
+  background: #f3eee5;
 }
 
 a {
@@ -96,8 +84,7 @@ select:focus-visible {
     1rem
     max(1rem, calc((100vw - var(--site-shell)) / 2));
   border-bottom: 1px solid var(--line);
-  background: rgba(244, 240, 232, 0.88);
-  backdrop-filter: blur(16px);
+  background: rgba(243, 238, 229, 0.97);
 }
 
 .site-brand {
@@ -148,7 +135,7 @@ select:focus-visible {
 .piece-card,
 .archive-panel {
   border: 1px solid var(--line);
-  border-radius: 1.6rem;
+  border-radius: 0;
   background: var(--paper);
 }
 
@@ -274,16 +261,17 @@ h3 {
   transition:
     transform 180ms ease,
     border-color 180ms ease;
+  border-top: 2px solid var(--ink);
 }
 
 .piece-thumb {
   width: 100%;
   aspect-ratio: 1200 / 630;
   border: 1px solid rgba(22, 22, 22, 0.08);
-  border-radius: 1rem;
+  border-radius: 0;
   background:
-    linear-gradient(135deg, rgba(125, 31, 31, 0.18), rgba(22, 22, 22, 0.03)),
-    linear-gradient(180deg, rgba(255, 255, 252, 0.9), rgba(244, 240, 232, 0.72));
+    linear-gradient(135deg, rgba(125, 31, 31, 0.12), rgba(22, 22, 22, 0.02)),
+    linear-gradient(180deg, rgba(255, 255, 252, 0.96), rgba(244, 240, 232, 0.84));
   background-position: center;
   background-size: cover;
 }
@@ -292,7 +280,7 @@ h3 {
   width: 100%;
   aspect-ratio: 4 / 3;
   border: 1px solid rgba(22, 22, 22, 0.08);
-  border-radius: 1rem;
+  border-radius: 0;
   background-position: center;
   background-size: cover;
 }
@@ -309,11 +297,10 @@ h3 {
   margin: 1.2rem 0;
   padding: clamp(1.1rem, 2.2vw, 1.8rem);
   border: 1px solid rgba(22, 22, 22, 0.08);
-  border-radius: 1rem;
+  border-radius: 0;
   background:
-    linear-gradient(135deg, rgba(125, 31, 31, 0.2), rgba(255, 255, 252, 0.1)),
-    linear-gradient(180deg, rgba(255, 255, 252, 0.9), rgba(236, 230, 220, 0.82));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    linear-gradient(135deg, rgba(125, 31, 31, 0.14), rgba(255, 255, 252, 0.08)),
+    linear-gradient(180deg, rgba(255, 255, 252, 0.96), rgba(236, 230, 220, 0.86));
 }
 
 .piece-cover-kicker,
@@ -338,7 +325,7 @@ h3 {
 .archive-panel:focus-visible,
 .issue-card:focus-visible,
 .piece-card:focus-visible {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   border-color: var(--line-strong);
 }
 
@@ -407,7 +394,7 @@ h3 {
   gap: 0.9rem;
   padding: 1.35rem;
   border: 1px solid var(--line);
-  border-radius: 1.4rem;
+  border-radius: 0;
   background: var(--paper);
 }
 
@@ -448,8 +435,8 @@ h3 {
   min-height: 3rem;
   padding: 0.9rem 1rem;
   border: 1px solid var(--line);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 252, 0.8);
+  border-radius: 0;
+  background: #fffdfa;
   font: inherit;
   color: var(--ink);
 }
@@ -491,8 +478,8 @@ h3 {
 
 .issue-lead-card {
   border: 1px solid var(--line);
-  border-radius: 1.4rem;
-  background: rgba(255, 255, 252, 0.56);
+  border-radius: 0;
+  background: rgba(255, 255, 252, 0.82);
 }
 
 .issue-lead-link {
@@ -583,9 +570,9 @@ h3 {
   min-height: min(80vh, 860px);
   padding: clamp(1.4rem, 3vw, 2.1rem);
   border: 1px solid var(--issue-line, var(--line));
-  border-radius: 1.8rem;
+  border-radius: 0;
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.02), transparent 42%),
     var(--issue-paper, var(--paper));
   overflow: hidden;
 }
@@ -643,7 +630,7 @@ h3 {
   gap: 0.95rem;
   padding: 1.15rem;
   border: 1px solid var(--issue-line, var(--line));
-  border-radius: 1.3rem;
+  border-radius: 0;
   background: var(--issue-surface, rgba(7, 10, 17, 0.6));
 }
 
@@ -651,7 +638,7 @@ h3 {
   width: 100%;
   aspect-ratio: 4 / 3;
   border: 1px solid var(--issue-line, var(--line));
-  border-radius: 1.1rem;
+  border-radius: 0;
   background-position: center;
   background-size: cover;
 }
@@ -717,13 +704,13 @@ h3 {
 
 [data-issue-layout="atlas"] .issue-lead-card {
   background:
-    linear-gradient(135deg, rgba(239, 143, 104, 0.12), rgba(8, 12, 18, 0.18)),
+    linear-gradient(135deg, rgba(239, 143, 104, 0.08), rgba(8, 12, 18, 0.14)),
     var(--issue-paper, rgba(19, 24, 36, 0.9));
 }
 
 .issue-card[data-issue-theme] {
   background:
-    linear-gradient(155deg, rgba(239, 143, 104, 0.12), transparent 45%),
+    linear-gradient(155deg, rgba(239, 143, 104, 0.08), transparent 45%),
     var(--paper);
 }
 
