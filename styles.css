@@ -89,13 +89,23 @@ select:focus-visible {
 
 .dot-link {
   position: relative;
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  min-width: 1.75rem;
-  min-height: 1.75rem;
-  border: 1px solid rgba(22, 22, 22, 0.25);
-  border-radius: 0;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 0;
+  background: transparent;
+  transition:
+    transform 180ms ease;
+}
+
+.dot-link::before {
+  content: "";
+  display: block;
+  width: 0.46rem;
+  height: 0.46rem;
+  border: 1px solid rgba(22, 22, 22, 0.34);
+  border-radius: 999px;
   background: transparent;
   transition:
     background-color 180ms ease,
@@ -103,17 +113,18 @@ select:focus-visible {
     transform 180ms ease;
 }
 
+.dot-link.is-active::before,
+.dot-link:hover::before,
+.dot-link:focus-visible::before,
+.dot-link[aria-current="true"]::before {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
 .dot-link.is-active,
 .dot-link:hover,
 .dot-link:focus-visible {
-  background: var(--ink);
-  border-color: var(--ink);
   transform: scale(1.05);
-}
-
-.dot-link[aria-current="true"] {
-  background: var(--ink);
-  border-color: var(--ink);
 }
 
 .masthead {
@@ -497,6 +508,18 @@ body.scrolled .masthead {
     bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
+    gap: 0.35rem;
+    padding: 0.28rem 0.5rem;
+  }
+
+  .dot-link {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .dot-link::before {
+    width: 0.38rem;
+    height: 0.38rem;
   }
 
   .masthead {

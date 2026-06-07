@@ -4,6 +4,7 @@ const sections = [...document.querySelectorAll(".snap-page[data-section]")];
 const dots = [...document.querySelectorAll(".dot-link[data-section]")];
 const heroSection = document.querySelector('.snap-page[data-section="title"]');
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const mobileLayout = window.matchMedia("(max-width: 720px)");
 
 const setActiveSection = (sectionName) => {
   dots.forEach((dot) => {
@@ -16,34 +17,50 @@ const setActiveSection = (sectionName) => {
   });
 };
 
+const useWindowScroll = () => mobileLayout.matches || !snapShell;
+
+const getScrollTop = () => {
+  if (useWindowScroll()) {
+    return window.scrollY || window.pageYOffset || 0;
+  }
+
+  return snapShell.scrollTop;
+};
+
 const setMastheadState = () => {
-  if (!snapShell || !heroSection) {
+  if (!heroSection) {
     return;
   }
 
   const triggerPoint = heroSection.clientHeight * 0.28;
-  body.classList.toggle("scrolled", snapShell.scrollTop > triggerPoint);
+  body.classList.toggle("scrolled", getScrollTop() > triggerPoint);
 };
 
-const sectionObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) {
-        return;
-      }
-
-      setActiveSection(entry.target.dataset.section);
-    });
-  },
-  {
-    root: snapShell,
-    threshold: 0.6,
+const updateActiveSectionFromViewport = () => {
+  if (!sections.length) {
+    return;
   }
-);
 
-sections.forEach((section) => {
-  sectionObserver.observe(section);
-});
+  const viewportMiddle = useWindowScroll()
+    ? window.innerHeight * 0.5
+    : snapShell.getBoundingClientRect().top + (snapShell.clientHeight * 0.5);
+
+  let activeSection = sections[0].dataset.section;
+  let smallestDistance = Number.POSITIVE_INFINITY;
+
+  sections.forEach((section) => {
+    const rect = section.getBoundingClientRect();
+    const sectionMiddle = rect.top + (rect.height * 0.5);
+    const distance = Math.abs(sectionMiddle - viewportMiddle);
+
+    if (distance < smallestDistance) {
+      smallestDistance = distance;
+      activeSection = section.dataset.section;
+    }
+  });
+
+  setActiveSection(activeSection);
+};
 
 dots.forEach((dot) => {
   dot.addEventListener("click", (event) => {
@@ -61,11 +78,27 @@ dots.forEach((dot) => {
   });
 });
 
+const handleScrollState = () => {
+  setMastheadState();
+  updateActiveSectionFromViewport();
+};
+
 setMastheadState();
-setActiveSection("title");
+updateActiveSectionFromViewport();
 
 if (snapShell) {
-  snapShell.addEventListener("scroll", setMastheadState, { passive: true });
+  snapShell.addEventListener("scroll", () => {
+    if (!useWindowScroll()) {
+      handleScrollState();
+    }
+  }, { passive: true });
 }
 
-window.addEventListener("resize", setMastheadState);
+window.addEventListener("scroll", () => {
+  if (useWindowScroll()) {
+    handleScrollState();
+  }
+}, { passive: true });
+
+window.addEventListener("resize", handleScrollState);
+mobileLayout.addEventListener("change", handleScrollState);
