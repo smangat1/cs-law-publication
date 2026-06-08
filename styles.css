@@ -94,6 +94,7 @@ select:focus-visible {
   width: 1.35rem;
   height: 1.35rem;
   border: 0;
+  border-radius: 999px;
   background: transparent;
   transition:
     transform 180ms ease;
@@ -125,6 +126,13 @@ select:focus-visible {
 .dot-link:hover,
 .dot-link:focus-visible {
   transform: scale(1.05);
+}
+
+.dot-link.is-active,
+.dot-link:hover,
+.dot-link:focus-visible,
+.dot-link[aria-current="true"] {
+  background: transparent;
 }
 
 .masthead {
@@ -203,6 +211,8 @@ body.scrolled .masthead {
   overflow-x: hidden;
   scroll-snap-type: y mandatory;
   scroll-padding-top: 0;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .snap-page {
@@ -498,9 +508,11 @@ body.scrolled .masthead {
 
 @media (max-width: 720px) {
   .snap-shell {
-    height: auto;
-    overflow: visible;
-    scroll-snap-type: none;
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: y proximity;
+    scroll-snap-stop: normal;
   }
 
   .dot-nav {
@@ -536,7 +548,7 @@ body.scrolled .masthead {
   .page-inner {
     width: min(100vw - 1.2rem, 100%);
     padding-top: 8.2rem;
-    padding-bottom: 1.25rem;
+    padding-bottom: 2rem;
   }
 
   .page-inner-hero {
@@ -549,7 +561,7 @@ body.scrolled .masthead {
   }
 
   .snap-page {
-    min-height: auto;
+    min-height: 100dvh;
   }
 
   .section-header h2,

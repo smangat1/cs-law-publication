@@ -4,7 +4,6 @@ const sections = [...document.querySelectorAll(".snap-page[data-section]")];
 const dots = [...document.querySelectorAll(".dot-link[data-section]")];
 const heroSection = document.querySelector('.snap-page[data-section="title"]');
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-const mobileLayout = window.matchMedia("(max-width: 720px)");
 
 const setActiveSection = (sectionName) => {
   dots.forEach((dot) => {
@@ -17,7 +16,7 @@ const setActiveSection = (sectionName) => {
   });
 };
 
-const useWindowScroll = () => mobileLayout.matches || !snapShell;
+const useWindowScroll = () => !snapShell;
 
 const getScrollTop = () => {
   if (useWindowScroll()) {
@@ -101,4 +100,3 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 window.addEventListener("resize", handleScrollState);
-mobileLayout.addEventListener("change", handleScrollState);
